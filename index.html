@@ -109,7 +109,6 @@ h1{margin:6px 0 2px;font-size:27px;text-align:center;letter-spacing:.3px;text-sh
   </div>
   <div class="tools">
     <button class="btn" id="preview">Preview mode: off</button>
-    <button class="btn" id="reset">Reset</button>
   </div>
 </div>
 <div class="ov" id="ov"><div class="scene">
@@ -260,9 +259,6 @@ function reveal(d){
 }
 document.getElementById('mClose').onclick=function(){document.getElementById('ov').classList.remove('show')};
 document.getElementById('preview').onclick=function(){preview=!preview;sSet('runadv:mode',preview?'preview':'real');load();render()};
-document.getElementById('reset').onclick=function(){
-  if(confirm('Reset your '+(preview?'preview calendar':'calendar')+'? All unwrapped presents will be cleared.')){sDel(key());load();render()}
-};
 function openStrava(){
   var t=Date.now();
   try{window.open('strava://record','_blank')}catch(e){}
