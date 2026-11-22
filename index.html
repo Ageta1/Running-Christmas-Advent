@@ -50,6 +50,143 @@ h1{margin:6px 0 2px;font-size:27px;text-align:center;letter-spacing:.3px;text-sh
 .btn{background:var(--panel);color:var(--ink);border:1px solid rgba(255,212,71,.4);border-radius:20px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
 .btn.on{background:var(--gold);color:#1d1a10;border-color:var(--gold)}
 .strava{background:#fc4c02;color:#fff;border:0}
+/* stage 1 */
+.prog{background:var(--panel);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,212,71,.35);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.ptop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ptop b{font-size:17px}.ptop b em{font-style:normal;color:var(--gold);font-size:22px}
+.ptop span{font-size:20px;font-weight:800;color:var(--gold)}
+.bar{height:14px;border-radius:8px;background:rgba(255,255,255,.14);overflow:hidden;margin:8px 0 7px}
+.bar i{display:block;height:100%;width:0;border-radius:8px;background:repeating-linear-gradient(45deg,#e0343c 0 8px,#fff 8px 16px);transition:width .6s ease}
+.pbot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--mute)}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin:12px 4px 0;font-size:12px;text-shadow:0 1px 4px #000}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.lg{display:inline-block;width:14px;height:14px;border-radius:4px;flex:none}
+.lg.l{background:#25362e;border:1px solid #5a7064}.lg.a{background:linear-gradient(135deg,#b3262e,#f1c84b)}
+.lg.o{background:#f6ead0;border:2px solid var(--gold);position:relative}.lg.o::after{content:"";position:absolute;top:-4px;right:-4px;width:7px;height:7px;border-radius:50%;background:#ff9f1c}
+.lg.c{background:#1f7a4f;border:2px solid #4fd08c}
+.locked::after{content:"🔒";position:absolute;right:2px;bottom:1px;font-size:11px}
+.open::after{content:"";position:absolute;top:-6px;right:-6px;width:15px;height:15px;border-radius:50%;background:#ff9f1c;border:2px solid #fff8e6}
+.done::after{content:"✓";position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:#fff;color:#1f7a4f;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.sheet{background:#10281d;border:1px solid rgba(255,212,71,.45);border-radius:20px;padding:22px 18px;width:100%;max-width:340px;text-align:center;max-height:92vh;overflow:auto}
+.sheet h2{margin:0 0 4px;font-size:15px;color:var(--mute);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.sheet .big{font-size:64px;font-weight:800;color:var(--gold);line-height:1.05;text-shadow:0 0 16px rgba(255,212,71,.6)}
+.sheet .big small{font-size:22px;color:var(--ink);text-shadow:none}
+.pill{display:inline-block;padding:4px 12px;border-radius:14px;font-size:12.5px;font-weight:700;margin:6px 0 14px}
+.pill.o{background:#ff9f1c;color:#2b1a00}.pill.c{background:#1f7a4f;color:#fff}
+.sheet .btn{display:block;width:100%;margin:8px 0 0;padding:12px;font-size:15px;text-align:center}
+.btn.ok{background:#1f9d62;color:#fff;border:0;font-weight:700}
+.btn.warn{background:#b3262e;color:#fff;border:0;font-weight:700}
+.sheet p.msg{margin:8px 0;font-size:14px;line-height:1.45;color:var(--ink)}
+.sheet textarea{width:100%;height:120px;border-radius:10px;border:1px solid rgba(255,212,71,.4);background:#0a1a12;color:var(--ink);font:16px/1.35 ui-monospace,Menlo,monospace;padding:8px;resize:none;margin:6px 0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#10281d;border:1px solid var(--gold);color:var(--ink);padding:10px 16px;border-radius:20px;font-size:13.5px;z-index:40;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:90%;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+/* stage 2 */
+html{-webkit-text-size-adjust:100%}
+body{min-height:100vh;min-height:100dvh}
+button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.door{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.btn{min-height:44px;font-size:14px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.sheet .btn{display:flex}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.sub{font-size:15px;line-height:1.4}
+.hint{font-size:13.5px;line-height:1.6;margin-top:20px}
+.stat span{font-size:11.5px}
+.legend{font-size:12.5px;gap:8px 16px}
+.tools{gap:10px;margin-top:16px}
+.scene p{font-size:16px;line-height:1.4;min-height:66px}
+.ov{padding:max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom));overscroll-behavior:contain}
+.sheet{max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov.show .sheet{animation:pop .3s cubic-bezier(.2,1.2,.4,1)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+.cd{display:flex;align-items:center;justify-content:center;gap:4px 12px;flex-wrap:wrap;background:var(--panel);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,212,71,.35);border-radius:14px;padding:9px 14px;margin:0 0 10px;text-align:center}
+.cd .cdl{font-size:13.5px;color:var(--mute)}
+.cd b{font-size:21px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.facts{margin:8px 0 10px;text-align:left}
+.facts div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.facts dt{font-size:13px;color:var(--mute);flex:none}
+.facts dd{margin:0;font-size:14px;font-weight:600;text-align:right}
+.facts dd.okc{color:#6fe0a6}
+.nlab{display:block;text-align:left;font-size:13px;color:var(--mute);margin:10px 0 2px}
+.sheet textarea.note{height:84px}
+.nmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);min-height:16px;margin-bottom:4px}
+.sheet .btn.go{background:var(--red);color:#fff;border:0;font-weight:700;font-size:16px}
+.wel{max-width:380px;text-align:left}
+.wgift{font-size:54px;text-align:center;line-height:1.1;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.wtitle{text-align:center;font-size:26px;font-weight:800;letter-spacing:.3px;text-shadow:0 0 14px rgba(255,212,71,.55)}
+.wsub{text-align:center;color:var(--mute);font-size:14px;margin:2px 0 0}
+.wtotal{background:linear-gradient(135deg,#7d1d24,#b3262e);border:1px solid rgba(255,212,71,.55);border-radius:14px;padding:12px;text-align:center;margin:14px 0 8px}
+.wtotal b{display:block;font-size:46px;line-height:1;color:var(--gold);text-shadow:0 0 14px rgba(255,212,71,.6)}
+.wtotal span{font-size:13px;letter-spacing:.8px;text-transform:uppercase}
+.how{list-style:none;margin:8px 0;padding:0;counter-reset:s}
+.how li{position:relative;padding:8px 0 8px 42px;font-size:14.5px;line-height:1.45;counter-increment:s}
+.how li::before{content:counter(s);position:absolute;left:0;top:7px;width:28px;height:28px;border-radius:50%;background:var(--gold);color:#2b1a00;font-weight:800;display:flex;align-items:center;justify-content:center}
+.wnote{font-size:12.5px;color:var(--mute);line-height:1.5;margin:6px 0}
+.wcount{text-align:center;font-size:14px;color:var(--gold);min-height:20px;margin:8px 0 2px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.ov.show .sheet,.wgift{animation:none}}
+/* stage 3 */
+.dash{margin-top:18px;display:grid;gap:10px}
+.dp{background:var(--panel);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,212,71,.35);border-radius:14px}
+.dp summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 14px;font-weight:700;font-size:15.5px;-webkit-tap-highlight-color:transparent}
+.dp summary::-webkit-details-marker{display:none}
+.dp summary em{font-style:normal;font-weight:600;font-size:13px;color:var(--gold);margin-left:auto;text-align:right}
+.dp summary::after{content:"›";font-size:22px;line-height:1;color:var(--mute);transform:rotate(90deg);transition:transform .2s}
+.dp[open] summary::after{transform:rotate(-90deg)}
+.dpb{padding:2px 14px 14px}
+.ach{display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:430px){.ach{grid-template-columns:1fr 1fr}}
+.bd{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:9px 10px;min-width:0}
+.bd .md{position:relative;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
+.bd.on .md{background:radial-gradient(circle at 35% 30%,#ffe9a0,#e0a82e 60%,#a9741a);border:2px solid #fff3c4;box-shadow:0 0 10px rgba(255,212,71,.5)}
+.bd.off .md{background:#1d2f26;border:2px dashed #4a5f54}
+.bd.off .md span{filter:grayscale(1);opacity:.5}
+.bd.off .md::after{content:"🔒";position:absolute;right:-5px;bottom:-5px;font-size:13px}
+.bd .bt{min-width:0;flex:1}
+.bd b{display:block;font-size:14px;line-height:1.25}
+.bd .bs{display:block;font-size:12px;color:var(--mute);line-height:1.35;margin-top:1px}
+.bd.on .bs{color:#ffe9a0}
+.bd.off b{color:#c9d6cd}
+.pb{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.14);margin-top:5px;overflow:hidden}
+.pb u{display:block;height:100%;background:#e0a82e;text-decoration:none;border-radius:3px}
+.bd.fresh .md{animation:pop2 .6s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop2{from{transform:scale(.4) rotate(-20deg)}}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 4px;text-align:center}
+.tile span{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;line-height:1.25}
+.tile b{display:block;font-size:22px;color:var(--gold);margin:5px 0 2px;line-height:1.1}
+.tile small{font-size:11.5px;color:var(--mute);line-height:1.3;display:block}
+.wkc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end;margin:6px 0 8px}
+.wcol{text-align:center}
+.wval{font-size:13px;font-weight:700;color:var(--gold);min-height:18px}
+.wbar{position:relative;height:110px;border-radius:8px 8px 4px 4px;background:rgba(255,255,255,.09);overflow:hidden}
+.wbar i{position:absolute;left:0;right:0;display:block}
+.wbar .dn{bottom:0;background:repeating-linear-gradient(45deg,#e0343c 0 6px,#fff 6px 12px)}
+.wbar .td{background:rgba(255,159,28,.5);border-top:2px solid #ff9f1c}
+.wlab{font-size:12.5px;font-weight:700;margin-top:5px}
+.wlab small{display:block;font-weight:400;color:var(--mute);font-size:11px}
+.wcol.cur .wlab{color:var(--gold)}
+.wkey{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--mute);margin-bottom:6px}
+.wkey span{display:inline-flex;align-items:center;gap:5px}
+.wkey i{display:inline-block;width:12px;height:12px;border-radius:3px}
+.wkey .k1{background:repeating-linear-gradient(45deg,#e0343c 0 3px,#fff 3px 6px)}
+.wkey .k2{background:rgba(255,159,28,.6);border:1px solid #ff9f1c}
+.wrow{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:8px;padding:9px 0;border-top:1px solid rgba(255,255,255,.12);font-size:13.5px;align-items:center}
+.wrow small{display:block;color:var(--mute);font-size:11.5px}
+.wrow b{font-size:15px}
+.wrow.cur{color:var(--gold)}
+.wrow.cur small{color:#ffe9a0}
+#achb{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-170%);z-index:45;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#7d1d24,#b3262e);border:2px solid var(--gold);border-radius:18px;padding:10px 18px 10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.55);max-width:92%;width:max-content;transition:transform .45s cubic-bezier(.2,1.2,.4,1);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#achb.show{transform:translate(-50%,0)}
+#achb .achi{position:relative;font-size:30px;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a0,#e0a82e 60%,#a9741a);border:2px solid #fff3c4;display:flex;align-items:center;justify-content:center;flex:none}
+#achb.show .achi{animation:pop2 .6s .15s cubic-bezier(.2,1.5,.4,1) both}
+#achb small{display:block;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#ffe9a0}
+#achb b{font-size:16px;line-height:1.25}
+#achb .sp{position:absolute;left:38px;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--gold);opacity:0;pointer-events:none;transform:rotate(45deg)}
+#achb.show .sp{animation:spark .9s ease-out .25s forwards}
+@keyframes spark{0%{opacity:1;transform:translate(0,0) rotate(45deg) scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(45deg) scale(.2)}}
+@media (prefers-reduced-motion:reduce){#achb{transition:none}#achb .sp{display:none}#achb.show .achi,.bd.fresh .md{animation:none}.dp summary::after{transition:none}}
 /* tree */
 .L{animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:.15}45%,55%{opacity:1}}
@@ -96,18 +233,40 @@ h1{margin:6px 0 2px;font-size:27px;text-align:center;letter-spacing:.3px;text-sh
 <div class="wrap">
   <h1>🎄 Run Advent Calendar</h1>
   <p class="sub" id="sub"></p>
+  <div class="cd" id="cd" role="timer"><span class="cdl" id="cdL"></span><b id="cdT"></b></div>
+  <div class="prog">
+    <div class="ptop"><b><em id="pKm">0</em> / 325 km</b><span id="pPct">0%</span></div>
+    <div class="bar" id="pBar" role="progressbar" aria-label="Distance completed" aria-valuemin="0" aria-valuemax="325" aria-valuenow="0"><i id="pFill"></i></div>
+    <div class="pbot"><span id="pRuns">0 of 25 runs completed</span><span id="pSave">Saves automatically</span></div>
+  </div>
   <div class="stats">
     <div class="stat"><b id="sOpen">0/25</b><span>Presents</span></div>
     <div class="stat"><b id="sRev">0</b><span>Km revealed</span></div>
     <div class="stat"><b id="sDone">0</b><span>Km run</span></div>
   </div>
   <div class="grid" id="grid"></div>
-  <p class="hint">Unwrap each day’s present to reveal your run. Every distance from 1 to 25 km appears exactly once. Tap an unwrapped present after your run to tick it off.</p>
+  <div class="legend"><span><i class="lg l"></i>Locked</span><span><i class="lg a"></i>Ready to unwrap</span><span><i class="lg o"></i>Opened, run to do</span><span><i class="lg c"></i>Completed</span></div>
+  <section class="dash" aria-label="Achievements and statistics">
+    <details class="dp" id="dpA"><summary><span>🏅 Achievements</span><em id="sumA"></em></summary>
+      <div class="dpb"><div class="ach" id="achGrid"></div></div></details>
+    <details class="dp" id="dpW"><summary><span>📅 Weekly summary</span><em id="sumW"></em></summary>
+      <div class="dpb">
+        <div class="wkc" id="wkChart" role="img"></div>
+        <div class="wkey"><span><i class="k1"></i>Completed km</span><span><i class="k2"></i>Opened, run to do</span></div>
+        <div id="wkRows"></div>
+      </div></details>
+    <details class="dp" id="dpS"><summary><span>📊 My stats</span><em id="sumS"></em></summary>
+      <div class="dpb"><div class="tiles" id="tiles"></div></div></details>
+  </section>
+  <p class="hint">Unwrap each day’s present to reveal your run. Every distance from 1 to 25 km appears exactly once. Tap an unwrapped present to see its run details, add a note and mark it completed.</p>
   <div class="tools">
     <button class="btn strava" id="rec">Record on Strava</button>
     <a class="btn" href="https://www.strava.com/upload/manual" target="_blank" rel="noopener">Add manual activity</a>
   </div>
   <div class="tools">
+    <button class="btn" id="how">How it works</button>
+    <button class="btn" id="exp">Export backup</button>
+    <button class="btn" id="imp">Import backup</button>
     <button class="btn" id="preview">Preview mode: off</button>
   </div>
 </div>
@@ -122,20 +281,87 @@ h1{margin:6px 0 2px;font-size:27px;text-align:center;letter-spacing:.3px;text-sh
   <div class="acts"><button class="btn go" id="mClose" style="display:none">Let’s run!</button> <button class="btn strava" id="mRec" style="display:none">Strava</button></div>
   <div id="conf"></div>
 </div></div>
+<div class="ov" id="dlg"><div class="sheet">
+  <h2 id="dDay"></h2>
+  <div class="big"><span id="dKm"></span><small> km</small></div>
+  <dl class="facts">
+    <div><dt>Advent date</dt><dd id="dDate"></dd></div>
+    <div><dt>Status</dt><dd id="dStat"></dd></div>
+    <div><dt>Completed on</dt><dd id="dWhen"></dd></div>
+  </dl>
+  <label class="nlab" for="dNote">Run notes (optional)</label>
+  <textarea class="note" id="dNote" maxlength="280" placeholder="How did it feel? Route, weather, who joined you…"></textarea>
+  <div class="nmeta"><span id="dNoteSt"></span><span id="dNoteN">0/280</span></div>
+  <div id="dMain">
+    <button class="btn ok" id="dDone">Mark Run Completed</button>
+    <button class="btn" id="dUndo">Undo completion</button>
+  </div>
+  <div id="dConf" style="display:none">
+    <p class="msg" id="dConfMsg"></p>
+    <button class="btn warn" id="dYes">Yes, undo completion</button>
+    <button class="btn" id="dNo">Keep it completed</button>
+  </div>
+  <button class="btn" id="dClose">Close</button>
+</div></div>
+<div class="ov" id="wel"><div class="sheet wel">
+  <div class="wgift">🎁</div>
+  <div class="wtitle">Run Advent</div>
+  <p class="wsub">25 days. 25 presents. One big Christmas challenge.</p>
+  <div class="wtotal"><b>325 km</b><span>total challenge distance</span></div>
+  <ol class="how">
+    <li><b>A present unlocks every day</b> at midnight, from 1 December to Christmas Day.</li>
+    <li><b>Unwrap it</b> to reveal your run for the day, anywhere from 1 to 25 km.</li>
+    <li><b>Every distance appears exactly once</b>, so no two days are the same.</li>
+    <li><b>Run it, then mark it completed</b> to fill your progress bar. Add a note if you like.</li>
+  </ol>
+  <p class="wnote">Distances stay secret until you unwrap each present. Progress saves on this device, so use Export backup now and then to keep a copy.</p>
+  <div class="wcount" id="wCount"></div>
+  <button class="btn go" id="wStart">Start Challenge</button>
+</div></div>
+<div class="ov" id="bk"><div class="sheet">
+  <h2 id="bTitle"></h2>
+  <div id="bExp">
+    <p class="msg">Keep this backup somewhere safe. You can restore it later on this or another device.</p>
+    <textarea id="bOut" readonly aria-label="Backup code"></textarea>
+    <button class="btn ok" id="bDl">Download backup file</button>
+    <button class="btn" id="bCopy">Copy backup code</button>
+  </div>
+  <div id="bImp">
+    <p class="msg">Choose a backup file, or paste a backup code below.</p>
+    <label class="btn" for="bFile">Choose backup file</label>
+    <input type="file" id="bFile" accept=".json,application/json,text/plain" hidden>
+    <textarea id="bIn" placeholder="Paste backup code here" aria-label="Paste backup code"></textarea>
+    <button class="btn ok" id="bGo">Restore from backup</button>
+    <div id="bAsk" style="display:none">
+      <p class="msg" id="bAskMsg"></p>
+      <button class="btn warn" id="bYes">Yes, replace my progress</button>
+      <button class="btn" id="bNo">Cancel</button>
+    </div>
+  </div>
+  <p class="msg" id="bMsg"></p>
+  <button class="btn" id="bClose">Close</button>
+</div></div>
+<div id="achb" role="status" aria-live="polite"><div class="achi" id="achI">🎁</div><div><small>Achievement unlocked!</small><b id="achN"></b></div>
+  <i class="sp" style="--x:-40px;--y:-34px"></i><i class="sp" style="--x:-8px;--y:-48px"></i><i class="sp" style="--x:28px;--y:-40px"></i><i class="sp" style="--x:50px;--y:-8px"></i><i class="sp" style="--x:44px;--y:28px"></i><i class="sp" style="--x:12px;--y:44px"></i><i class="sp" style="--x:-28px;--y:40px"></i><i class="sp" style="--x:-50px;--y:6px"></i></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
 var NOW=new Date(),MON=NOW.getMonth(),YEAR=NOW.getFullYear();
 var PAL=[['#b3262e','#f1c84b'],['#0f6b4a','#e7414a'],['#1f4e9a','#e9eef5'],['#6f3a9c','#f4d36b'],['#e8dcc0','#b3262e'],['#d9772b','#1f4e3a'],['#0c8a8a','#f3e9d2'],['#2a2a3a','#e7b94a'],['#c94f7c','#f6e7b0'],['#f0f3f7','#2b5fa8']];
 var mem={};
 function sGet(k){try{return localStorage.getItem(k)}catch(e){return mem[k]||null}}
-function sSet(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
+function sSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){mem[k]=v;return false}}
 function sDel(k){try{localStorage.removeItem(k)}catch(e){delete mem[k]}}
 var preview=sGet('runadv:mode')==='preview';
 function key(){return 'runadv:'+(preview?'preview':'real')+':'+YEAR}
 var st={opened:{},done:{}};
-function load(){var r=sGet(key());st={opened:{},done:{}};if(r){try{var p=JSON.parse(r);if(p&&p.opened)st=p;if(!st.done)st.done={}}catch(e){}}}
-function save(){sSet(key(),JSON.stringify(st))}
-function unlocked(){if(preview)return 25;if(MON<11)return 0;if(MON===11)return Math.min(25,NOW.getDate());return 25}
+function load(){var r=sGet(key());st={opened:{},done:{},doneAt:{},notes:{},ach:{}};if(r){try{var p=JSON.parse(r);if(p&&p.opened)st=p;if(!st.done)st.done={};if(!st.doneAt)st.doneAt={};if(!st.notes)st.notes={};if(!st.ach)st.ach={}}catch(e){}}}
+function save(){
+  var ok=sSet(key(),JSON.stringify(st)),ps=document.getElementById('pSave');
+  if(ps)ps.textContent=ok?'✓ Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'⚠ Can’t save here: export a backup';
+  return ok;
+}
+function unlocked(){if(preview)return 25;var n=new Date(),m=n.getMonth();if(n.getFullYear()>YEAR)return 25;if(m<11)return 0;if(m===11)return Math.min(25,n.getDate());return 25}
 function draw(){
   var u={},pool=[],i;for(var d in st.opened)u[st.opened[d]]=1;
   for(i=1;i<=25;i++)if(!u[i])pool.push(i);
@@ -154,7 +380,7 @@ var WS=[
 ];
 function render(){
   var g=document.getElementById('grid');g.innerHTML='';
-  var up=unlocked(),openN=0,rev=0,dn=0;
+  var up=unlocked(),openN=0,rev=0,dn=0,dc=0;
   for(var d=1;d<=25;d++){
     var b=document.createElement('button');b.className='door';b.type='button';
     var pal=PAL[pidx(d)],ws=WS[(d*7+Math.floor(d/5))%WS.length];
@@ -168,29 +394,36 @@ function render(){
     b.style.animationDelay=(-hv(d,7)*2.8).toFixed(2)+'s';
     var km=st.opened[d];
     if(km){
-      openN++;rev+=km;var isDone=!!st.done[d];if(isDone)dn+=km;
+      openN++;rev+=km;var isDone=!!st.done[d];if(isDone){dn+=km;dc++}
       b.className+=isDone?' done':' open';
-      b.innerHTML='<span class="n">Dec '+d+(isDone?' ✓':'')+'</span><span class="km">'+km+'</span><span class="u">km</span>';
-      b.setAttribute('aria-label','Dec '+d+': '+km+' km'+(isDone?', done':''));
-      b.onclick=(function(dd){return function(){if(st.done[dd])delete st.done[dd];else st.done[dd]=1;save();render()}})(d);
+      b.innerHTML='<span class="n">Dec '+d+'</span><span class="km">'+km+'</span><span class="u">km</span>';
+      b.setAttribute('aria-label','Dec '+d+': '+km+' km'+(isDone?', completed':', run not yet completed'));
+      b.onclick=(function(dd){return function(){openDetail(dd)}})(d);
     }else if(d<=up){
       b.className+=' avail'+(ws.nb?' nb':'');b.innerHTML='<span class="lab">'+d+'</span>';
       b.setAttribute('aria-label','Unwrap present for Dec '+d);
       b.onclick=(function(dd){return function(){reveal(dd)}})(d);
     }else{
-      b.className+=' locked'+(ws.nb?' nb':'');b.disabled=true;b.innerHTML='<span class="lab">'+d+'</span>';
+      b.className+=' locked'+(ws.nb?' nb':'');b.disabled=true;b.innerHTML='<span class="lab">'+d+'</span>';b.setAttribute('aria-label','Dec '+d+', locked');
     }
     g.appendChild(b);
   }
   document.getElementById('sOpen').textContent=openN+'/25';
   document.getElementById('sRev').textContent=rev;
   document.getElementById('sDone').textContent=dn;
+  var pct=dn/325*100;
+  document.getElementById('pKm').textContent=dn;
+  document.getElementById('pPct').textContent=(pct%1===0?pct.toFixed(0):pct.toFixed(1))+'%';
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pBar').setAttribute('aria-valuenow',dn);
+  document.getElementById('pRuns').textContent=dc+' of 25 runs completed';
   var sub=document.getElementById('sub');
   if(preview)sub.textContent='Preview mode: all presents unlocked, separate from your real calendar';
   else if(up===0)sub.textContent='Presents unlock from 1 December';
   else if(openN<up)sub.textContent=(up-openN)+' present'+(up-openN>1?'s':'')+' waiting to be unwrapped';
   else sub.textContent=openN===25?'All 25 presents unwrapped. Merry Christmas!':'Come back tomorrow for the next present';
   var pb=document.getElementById('preview');pb.textContent='Preview mode: '+(preview?'on':'off');pb.className='btn'+(preview?' on':'');
+  renderStats();
   weave();
 }
 function bez(a,c,b,t){var u=1-t;return [u*u*a[0]+2*u*t*c[0]+t*t*b[0],u*u*a[1]+2*u*t*c[1]+t*t*b[1]]}
@@ -252,13 +485,13 @@ function reveal(d){
   setTimeout(function(){g.className='gift s1 s2 s3';confetti()},1850);
   setTimeout(function(){g.className='gift s1 s2 s3 s4'},2350);
   setTimeout(function(){
-    document.getElementById('mMsg').textContent=km<=5?'A gentle one. Enjoy it!':km<=12?'A solid run today.':km<=19?'Time to lace up properly.':'Big day. Fuel up!';
+    document.getElementById('mMsg').textContent=reaction(km);
     document.getElementById('mClose').style.display='inline-block';document.getElementById('mRec').style.display='inline-block';
     busy=false;render();
   },3500);
 }
 document.getElementById('mClose').onclick=function(){document.getElementById('ov').classList.remove('show')};
-document.getElementById('preview').onclick=function(){preview=!preview;sSet('runadv:mode',preview?'preview':'real');load();render()};
+document.getElementById('preview').onclick=function(){preview=!preview;sSet('runadv:mode',preview?'preview':'real');load();syncAch(false);lastUp=unlocked();render()};
 function openStrava(){
   var t=Date.now();
   try{window.open('strava://record','_blank')}catch(e){}
@@ -266,6 +499,253 @@ function openStrava(){
 }
 document.getElementById('rec').onclick=openStrava;
 document.getElementById('mRec').onclick=openStrava;
+/* ---- stage 1: toast, completion, backup, midnight unlock ---- */
+var tt;
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='show';clearTimeout(tt);tt=setTimeout(function(){t.className=''},2600)}
+function shut(id){if(id==='dlg')saveNote();document.getElementById(id).classList.remove('show')}
+['dlg','bk'].forEach(function(id){var o=document.getElementById(id);o.onclick=function(e){if(e.target===o)shut(id)}});
+var cur=0,noteT;
+function fmtD(dt){try{return dt.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){return ''+dt}}
+function paintDetail(){
+  var done=!!st.done[cur],ds=document.getElementById('dStat'),when='—';
+  document.getElementById('dDate').textContent=fmtD(new Date(YEAR,11,cur));
+  ds.textContent=done?'✓ Completed':'Opened, not yet completed';ds.className=done?'okc':'';
+  if(done){var t=st.doneAt&&st.doneAt[cur]?new Date(st.doneAt[cur]):null;
+    when=(t&&!isNaN(t))?t.toLocaleString(undefined,{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'Date not recorded'}
+  document.getElementById('dWhen').textContent=when;
+  document.getElementById('dDone').style.display=done?'none':'flex';
+  document.getElementById('dUndo').style.display=done?'flex':'none';
+  document.getElementById('dConf').style.display='none';
+  document.getElementById('dMain').style.display='block';
+}
+function noteStatus(m){document.getElementById('dNoteSt').textContent=m||''}
+function saveNote(){
+  clearTimeout(noteT);
+  if(!cur||!st.opened[cur]||!document.getElementById('dlg').classList.contains('show'))return;
+  if(!st.notes)st.notes={};
+  var v=document.getElementById('dNote').value.replace(/\s+$/,'').slice(0,280),old=st.notes[cur]||'';
+  if(v===old)return;
+  if(v)st.notes[cur]=v;else delete st.notes[cur];
+  save();noteStatus('✓ Note saved');
+}
+var noteEl=document.getElementById('dNote');
+noteEl.oninput=function(){document.getElementById('dNoteN').textContent=noteEl.value.length+'/280';noteStatus('Saving…');clearTimeout(noteT);noteT=setTimeout(saveNote,500)};
+noteEl.onblur=saveNote;
+function openDetail(d){
+  if(!st.opened[d])return;cur=d;
+  document.getElementById('dDay').textContent='Present '+d+' · Run details';
+  document.getElementById('dKm').textContent=st.opened[d];
+  noteEl.value=(st.notes&&st.notes[d])||'';document.getElementById('dNoteN').textContent=noteEl.value.length+'/280';noteStatus('');
+  paintDetail();document.getElementById('dlg').classList.add('show');
+}
+document.getElementById('dDone').onclick=function(){
+  if(!st.opened[cur])return;
+  if(!st.doneAt)st.doneAt={};
+  st.done[cur]=1;st.doneAt[cur]=new Date().toISOString();var fresh=syncAch(true);save();render();shut('dlg');toast('Run completed. Well done! 🎉');celebrate(fresh);
+};
+document.getElementById('dUndo').onclick=function(){
+  document.getElementById('dConfMsg').textContent='Undo completion for December '+cur+'? Your progress will go down by '+st.opened[cur]+' km. Your note is kept.';
+  document.getElementById('dMain').style.display='none';document.getElementById('dConf').style.display='block';
+};
+document.getElementById('dYes').onclick=function(){delete st.done[cur];if(st.doneAt)delete st.doneAt[cur];syncAch(false);save();render();shut('dlg');toast(lostAch.length?'Completion undone. Locked again: '+lostAch.map(function(a){return a.n}).join(', '):'Completion undone')};
+document.getElementById('dNo').onclick=paintDetail;
+document.getElementById('dClose').onclick=function(){shut('dlg')};
+
+var pend=null;
+function bmsg(m){document.getElementById('bMsg').textContent=m||''}
+function openBk(mode){
+  if(preview){toast('Turn off Preview mode to use backups');return}
+  document.getElementById('bExp').style.display=mode==='exp'?'block':'none';
+  document.getElementById('bImp').style.display=mode==='imp'?'block':'none';
+  document.getElementById('bAsk').style.display='none';
+  document.getElementById('bTitle').textContent=mode==='exp'?'Export backup':'Import backup';
+  bmsg('');pend=null;
+  if(mode==='exp')document.getElementById('bOut').value=JSON.stringify({app:'run-advent',version:1,year:YEAR,exportedAt:new Date().toISOString(),opened:st.opened,done:st.done,doneAt:st.doneAt||{},notes:st.notes||{},ach:st.ach||{}},null,2);
+  else document.getElementById('bIn').value='';
+  document.getElementById('bk').classList.add('show');
+}
+document.getElementById('exp').onclick=function(){openBk('exp')};
+document.getElementById('imp').onclick=function(){openBk('imp')};
+document.getElementById('bClose').onclick=function(){shut('bk')};
+document.getElementById('bDl').onclick=function(){
+  try{
+    var b=new Blob([document.getElementById('bOut').value],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u;a.download='run-advent-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(u);a.remove()},1500);bmsg('Backup downloaded. If nothing happened, use Copy backup code instead.');
+  }catch(e){bmsg('Download isn’t supported here. Use Copy backup code instead.')}
+};
+document.getElementById('bCopy').onclick=function(){
+  var t=document.getElementById('bOut');
+  function fb(){try{t.focus();t.select();t.setSelectionRange(0,t.value.length);document.execCommand('copy');bmsg('Backup code copied.')}catch(e){bmsg('Press and hold the code to copy it.')}}
+  try{navigator.clipboard.writeText(t.value).then(function(){bmsg('Backup code copied.')},fb)}catch(e){fb()}
+};
+document.getElementById('bFile').onchange=function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  var r=new FileReader();r.onload=function(){document.getElementById('bIn').value=String(r.result||'');bmsg('File loaded. Tap Restore from backup.')};
+  r.onerror=function(){bmsg('Couldn’t read that file.')};r.readAsText(f);this.value='';
+};
+function parseBackup(txt){
+  var o;try{o=JSON.parse(txt)}catch(e){return{err:'That doesn’t look like a Run Advent backup.'}}
+  if(!o||o.app!=='run-advent'||!o.opened||typeof o.opened!=='object')return{err:'That doesn’t look like a Run Advent backup.'}
+  if(o.year!==YEAR)return{err:'This backup is for '+o.year+', but this calendar is for '+YEAR+'.'}
+  var op={},seen={},k,d,v,up=unlocked();
+  for(k in o.opened){
+    d=Number(k);v=Number(o.opened[k]);
+    if(!(d>=1&&d<=25&&d%1===0&&v>=1&&v<=25&&v%1===0))return{err:'The backup contains invalid data, so nothing was changed.'}
+    if(seen[v])return{err:'The backup repeats a distance, so nothing was changed.'}
+    if(d>up)return{err:'The backup includes presents that haven’t unlocked yet, so nothing was changed.'}
+    seen[v]=1;op[d]=v;
+  }
+  var dn={},da={},nt={},x;
+  if(o.done&&typeof o.done==='object')for(k in o.done){d=Number(k);if(op[d]&&o.done[k]){dn[d]=1;x=o.doneAt&&o.doneAt[k];if(typeof x==='string'&&!isNaN(new Date(x)))da[d]=x}}
+  if(o.notes&&typeof o.notes==='object')for(k in o.notes){d=Number(k);x=o.notes[k];if(op[d]&&typeof x==='string'&&x.trim())nt[d]=x.slice(0,280)}
+  var ac={};
+  if(o.ach&&typeof o.ach==='object')for(k in o.ach){x=o.ach[k];if(AC.some(function(a){return a.id===k})&&typeof x==='string'&&(x===''||!isNaN(new Date(x))))ac[k]=x}
+  return{opened:op,done:dn,doneAt:da,notes:nt,ach:ac};
+}
+function cnt(o){var n=0;for(var k in o)n++;return n}
+function applyBackup(b){
+  st={opened:b.opened,done:b.done,doneAt:b.doneAt||{},notes:b.notes||{},ach:b.ach||{}};syncAch(false);save();render();shut('bk');toast('Progress restored from backup');pend=null;
+}
+document.getElementById('bGo').onclick=function(){
+  var r=parseBackup(document.getElementById('bIn').value.trim());
+  if(r.err){bmsg(r.err);return}
+  if(!cnt(r.opened)){bmsg('That backup has no opened presents.');return}
+  if(!cnt(st.opened)){applyBackup(r);return}
+  pend=r;bmsg('');
+  document.getElementById('bAskMsg').textContent='Backup: '+cnt(r.opened)+' presents opened, '+cnt(r.done)+' completed. Your current progress ('+cnt(st.opened)+' opened, '+cnt(st.done)+' completed) will be replaced. This can’t be undone.';
+  document.getElementById('bAsk').style.display='block';
+};
+document.getElementById('bYes').onclick=function(){if(pend)applyBackup(pend)};
+document.getElementById('bNo').onclick=function(){pend=null;document.getElementById('bAsk').style.display='none';bmsg('Nothing was changed.')};
+
+function dayKey(){var n=new Date();return n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate()}
+var lastDay=dayKey(),lastUp=unlocked();
+function checkDay(){
+  var k=dayKey(),u=unlocked();
+  if(k!==lastDay||u!==lastUp){var more=u>lastUp&&!preview;lastDay=k;lastUp=u;render();if(more)toast('🎁 A new present has unlocked!')}
+}
+function schedMid(){var n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,1);setTimeout(function(){checkDay();schedMid()},Math.max(1000,nx-n))}
+schedMid();setInterval(checkDay,30000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkDay()});
+window.addEventListener('focus',checkDay);window.addEventListener('pageshow',checkDay);
+/* ---- stage 2: reactions, countdown, welcome ---- */
+var RX=[
+ ['Just {km} km? The elves do longer warm-ups. Easy peasy! 🧝','{km} km: barely a lap of the mince pie table. 🥧','A cheeky little {km} km. Even Rudolph’s nose is not impressed. 🦌'],
+ ['{km} km, a lovely stocking-filler of a run. 🧦','Short and sweet, like a candy cane. {km} km! 🍬','{km} km. Shorter than the Christmas film you’ll watch afterwards. 🎬'],
+ ['{km} km of proper sleigh training. The reindeer approve. 🛷','Enough to earn a second helping of roast potatoes. 🥔','Santa’s watching your pace… {km} km, no slacking! 🎅'],
+ ['{km} km! Pack snacks and a spare Santa hat. 🎩','A proper run. Your mince pies are officially earned. 🥧','Rudolph picked your route: expect hills. {km} km! 🔴'],
+ ['{km} km?! Santa’s delivering a SERIOUS one. Stretch first! 🎅','That’s a whole Christmas Eve delivery round. Pack the sprouts! 🥦','Bold. Brave. Slightly bonkers. {km} km. The elves are clapping. 👏'],
+ ['THE BIG ONE! 25 km. Even Santa takes the sleigh for that. 🛷🔥','25 km of pure legend. Cancel your plans and call the elves! 🧝','The full 25! Frosty is melting with pride. ⛄']
+];
+function reaction(km){var t=km<=3?0:km<=7?1:km<=12?2:km<=18?3:km<=24?4:5,a=RX[t];return a[Math.floor(Math.random()*a.length)].split('{km}').join(km)}
+function cdInfo(){
+  if(preview)return null;
+  var n=new Date(),up=unlocked();
+  if(up>=25)return{done:true};
+  var tgt=up===0?new Date(YEAR,11,1,0,0,0):new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,0);
+  return{ms:tgt-n,day:up+1};
+}
+function p2(v){return v<10?'0'+v:''+v}
+function fmtCd(ms){var t=Math.max(0,Math.floor(ms/1000)),d=Math.floor(t/86400),h=Math.floor(t%86400/3600),m=Math.floor(t%3600/60);return (d?d+'d ':'')+p2(h)+':'+p2(m)+':'+p2(t%60)}
+function tickCd(){
+  var c=document.getElementById('cd'),w=document.getElementById('wCount'),i=cdInfo();
+  if(!i){c.style.display='none';w.textContent='';return}
+  c.style.display='flex';
+  if(i.done){document.getElementById('cdL').textContent='🎄 All 25 presents are unlocked';document.getElementById('cdT').textContent='';w.textContent='';return}
+  var t=fmtCd(i.ms);
+  document.getElementById('cdL').textContent='Present '+i.day+' unlocks in';document.getElementById('cdT').textContent=t;
+  w.textContent=(i.day===1?'First present unlocks in ':'Next present unlocks in ')+t;
+  if(i.ms<=0)checkDay();
+}
+setInterval(tickCd,1000);tickCd();
+function hasProgress(){try{var p=JSON.parse(sGet('runadv:real:'+YEAR)||'null');return !!(p&&p.opened&&Object.keys(p.opened).length)}catch(e){return false}}
+function showWelcome(first){
+  document.getElementById('wStart').textContent=first?'Start Challenge':'Back to my calendar';
+  tickCd();document.getElementById('wel').classList.add('show');
+}
+document.getElementById('wStart').onclick=function(){sSet('runadv:welcomed','1');shut('wel');try{window.scrollTo(0,0)}catch(e){}};
+document.getElementById('how').onclick=function(){showWelcome(false)};
+document.getElementById('wel').onclick=function(e){if(e.target===document.getElementById('wel')&&sGet('runadv:welcomed'))shut('wel')};
+/* ---- stage 3: achievements, weekly summary, stats ---- */
+var AC=[
+ {id:'first',ic:'🎁',n:'First Footprints',t:'Complete your first run',k:'runs',v:1},
+ {id:'r7',ic:'🧦',n:'Stocking Stuffer',t:'Complete 7 runs',k:'runs',v:7},
+ {id:'km50',ic:'🦌',n:'Rudolph’s Warm-Up',t:'Complete 50 km in total',k:'km',v:50},
+ {id:'r14',ic:'🔔',n:'Jingle Bell Rocker',t:'Complete 14 runs',k:'runs',v:14},
+ {id:'km100',ic:'🛷',n:'Sleigh Rider',t:'Complete 100 km in total',k:'km',v:100},
+ {id:'km200',ic:'🎅',n:'Santa’s Right Hand',t:'Complete 200 km in total',k:'km',v:200},
+ {id:'r25',ic:'🎄',n:'Advent Champion',t:'Complete all 25 runs',k:'runs',v:25},
+ {id:'km325',ic:'🌟',n:'Christmas Legend',t:'Complete all 325 km',k:'km',v:325}
+];
+var WK=[[1,7],[8,14],[15,21],[22,25]],lostAch=[],fresh={},achQ=[],achBusy=false,achT;
+function calc(){
+  var r={runs:0,km:0,lon:0,lonD:0,weeks:[]},d,k;
+  for(d=1;d<=25;d++)if(st.opened[d]&&st.done[d]){k=st.opened[d];r.runs++;r.km+=k;if(k>r.lon){r.lon=k;r.lonD=d}}
+  WK.forEach(function(w){
+    var x={a:w[0],b:w[1],n:w[1]-w[0]+1,km:0,runs:0,todo:0},e;
+    for(e=w[0];e<=w[1];e++)if(st.opened[e]){if(st.done[e]){x.km+=st.opened[e];x.runs++}else x.todo+=st.opened[e]}
+    r.weeks.push(x);
+  });
+  return r;
+}
+function syncAch(announce){
+  if(!st.ach)st.ach={};
+  var s2=calc(),changed=false,out=[];lostAch=[];
+  AC.forEach(function(a){
+    var ok=s2[a.k]>=a.v,has=Object.prototype.hasOwnProperty.call(st.ach,a.id);
+    if(ok&&!has){st.ach[a.id]=announce?new Date().toISOString():'';changed=true;if(announce)out.push(a)}
+    else if(!ok&&has){delete st.ach[a.id];changed=true;lostAch.push(a)}
+  });
+  if(changed)save();
+  return out;
+}
+function celebrate(list){if(!list.length)return;list.forEach(function(a){fresh[a.id]=1;achQ.push(a)});renderStats();setTimeout(function(){fresh={};renderStats()},2500);nextAch()}
+function nextAch(){
+  if(achBusy||!achQ.length)return;
+  achBusy=true;var a=achQ.shift(),b=document.getElementById('achb');
+  document.getElementById('achI').textContent=a.ic;document.getElementById('achN').textContent=a.n;
+  b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
+  achT=setTimeout(hideAch,3300);
+}
+function hideAch(){
+  clearTimeout(achT);document.getElementById('achb').classList.remove('show');
+  setTimeout(function(){achBusy=false;nextAch()},500);
+}
+document.getElementById('achb').onclick=hideAch;
+function curWeek(){var n=new Date();if(preview||n.getFullYear()!==YEAR||n.getMonth()!==11||n.getDate()>25)return -1;return Math.min(3,Math.floor((n.getDate()-1)/7))}
+function fmtN(v){return v%1===0?String(v):v.toFixed(1)}
+function renderStats(){
+  var c=calc(),i,h='',n=0,cw=curWeek();
+  /* achievements */
+  AC.forEach(function(a){
+    var on=Object.prototype.hasOwnProperty.call(st.ach||{},a.id),cur=c[a.k],u=a.k==='km'?' km':' runs',sub;
+    if(on){n++;var dt=st.ach[a.id]?new Date(st.ach[a.id]):null;sub='Unlocked'+(dt&&!isNaN(dt)?' · '+dt.toLocaleDateString(undefined,{day:'numeric',month:'short'}):'')}
+    else sub=Math.min(cur,a.v)+' / '+a.v+u;
+    h+='<div class="bd '+(on?'on':'off')+(fresh[a.id]?' fresh':'')+'"><div class="md"><span>'+a.ic+'</span></div><div class="bt"><b>'+a.n+'</b><span class="bs">'+(on?a.t:a.t)+'</span><span class="bs">'+sub+'</span>'+(on?'':'<i class="pb"><u style="width:'+Math.min(100,cur/a.v*100)+'%"></u></i>')+'</div></div>';
+  });
+  document.getElementById('achGrid').innerHTML=h;
+  document.getElementById('sumA').textContent=n+' of '+AC.length+' unlocked';
+  /* weekly summary + chart */
+  var mx=25,ch='',rows='',lab=[];
+  c.weeks.forEach(function(w){mx=Math.max(mx,w.km+w.todo)});
+  c.weeks.forEach(function(w,j){
+    var dp=w.km/mx*100,tp=w.todo/mx*100,rg=w.a+'–'+w.b+' Dec';
+    ch+='<div class="wcol'+(j===cw?' cur':'')+'"><div class="wval">'+w.km+'</div><div class="wbar"><i class="td" style="bottom:'+dp+'%;height:'+tp+'%"></i><i class="dn" style="height:'+dp+'%"></i></div><div class="wlab">W'+(j+1)+'<small>'+rg+'</small></div></div>';
+    rows+='<div class="wrow'+(j===cw?' cur':'')+'"><span><b>Week '+(j+1)+'</b><small>'+rg+(j===cw?' · this week':'')+'</small></span><span><b>'+w.km+'</b> km</span><span><b>'+w.runs+'</b> of '+w.n+' runs</span></div>';
+    lab.push('week '+(j+1)+': '+w.km+' km, '+w.runs+' of '+w.n+' runs');
+  });
+  var wc=document.getElementById('wkChart');wc.innerHTML=ch;wc.setAttribute('aria-label','Completed kilometres by week. '+lab.join('; '));
+  document.getElementById('wkRows').innerHTML=rows;
+  document.getElementById('sumW').textContent=cw>=0?'This week: '+c.weeks[cw].km+' km · '+c.weeks[cw].runs+' runs':c.km+' km in total';
+  /* personal stats */
+  var avg=c.runs?c.km/c.runs:0;
+  document.getElementById('tiles').innerHTML=
+    '<div class="tile"><span>Longest run</span><b>'+(c.runs?c.lon+' km':'—')+'</b><small>'+(c.runs?'Present '+c.lonD:'none yet')+'</small></div>'+
+    '<div class="tile"><span>Average run</span><b>'+(c.runs?fmtN(Math.round(avg*10)/10)+' km':'—')+'</b><small>'+(c.runs?'over '+c.runs+(c.runs===1?' run':' runs'):'none yet')+'</small></div>'+
+    '<div class="tile"><span>Total completed</span><b>'+c.km+' km</b><small>of 325 km</small></div>';
+  document.getElementById('sumS').textContent=c.km+' km · '+c.runs+(c.runs===1?' run':' runs');
+}
 /* Christmas tree background */
 var NS='http://www.w3.org/2000/svg',lights=[],wl=[],mode=0;
 var LC=['#ff4d4d','#ffd447','#4da6ff','#7dff7d'];
@@ -372,7 +852,8 @@ function setMode(m){
 }
 buildTree();buildSnow();setMode(0);
 setInterval(function(){mode=(mode+1)%4;setMode(mode)},6000);
-load();render();
+load();syncAch(false);render();
+if(!sGet('runadv:welcomed')){if(hasProgress())sSet('runadv:welcomed','1');else showWelcome(true)}
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(weave,150)});
 })();
 </script>
