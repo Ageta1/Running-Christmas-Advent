@@ -306,6 +306,20 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
 .social-mode{font-size:12px;color:var(--gold);margin-left:6px}
 @media(max-width:360px){.social-row{grid-template-columns:20px minmax(0,1fr) auto;gap:5px}.social-score b{font-size:14px}}
 
+/* Stage 6 welcome fix: two visible onboarding steps and discoverable difficulty settings. */
+.onboard-step-label{text-align:center;color:var(--gold);font-size:11px;font-weight:800;letter-spacing:1.5px;margin:0 0 10px}
+.onboard-page{min-width:0}
+.welcome-feature{border:1px solid rgba(255,212,71,.4);background:rgba(255,212,71,.08);border-radius:12px;padding:12px;margin:10px 0;line-height:1.5}
+.welcome-feature b,.welcome-feature span,.welcome-feature small{display:block}
+.welcome-feature b{color:var(--gold);font-size:15px}
+.welcome-feature span{font-weight:700;font-size:13px;margin:4px 0}
+.welcome-feature small{color:var(--mute);font-size:12px}
+.onboard-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:8px;margin-top:12px}
+.onboard-actions .btn{margin:0;min-width:0;font-size:13px;padding:10px 5px}
+#wel .btn:disabled{opacity:.48;cursor:not-allowed}
+.hub-rules{display:block;margin:0 auto 12px;font-size:12px;min-height:40px;border:1px solid rgba(255,212,71,.45)}
+#wel .diff-opt:not(:disabled):hover{border-color:var(--gold)}
+@media(max-width:350px){.onboard-actions{grid-template-columns:1fr}.welcome-feature{padding:9px}.wel{padding:16px 13px}}
 /* Stage 6: backend setup is independent of guest/local challenge functionality. */
 .cloud-card{border:1px solid rgba(255,212,71,.33);border-radius:12px;padding:12px;background:rgba(255,255,255,.055);margin:8px 0}
 .cloud-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -330,7 +344,7 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
     <div class="pbot"><span id="pRuns">0 of 25 runs completed</span><span id="pSave">Saves automatically</span></div>
   </div>
   <div class="fcard" id="fcard"><div><b>🏆 Challenge complete!</b><span>Merry Christmas! Every run finished.</span></div><div class="fb"><button class="btn go" id="fcView">Celebrate</button><button class="btn" id="fcCert">Certificate</button></div></div>
-  <div class="rule-head"><span class="mode-tag" id="modeTag">Advanced · 325 km</span></div>
+  <div class="rule-head"><span class="mode-tag" id="modeTag">Advanced · 325 km</span><button type="button" class="btn hub-rules" id="hubSettings" aria-controls="dpRules">🎯 View / change difficulty</button></div>
   <div class="stats">
     <div class="stat"><b id="sOpen">0/25</b><span>Presents</span></div>
     <div class="stat"><b id="sRev">0</b><span>Km revealed</span></div>
@@ -458,23 +472,36 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
   </div>
   <button class="btn" id="dClose">Close</button>
 </div></div>
-<div class="ov" id="wel"><div class="sheet wel">
-  <div class="wgift">🎁</div>
-  <div class="wtitle">Run Advent</div>
-  <p class="wsub">25 days. 25 presents. One big Christmas challenge.</p>
-  <div class="wtotal"><b id="welcomeTotal">325 km</b><span>total challenge distance</span></div>
-  <p class="nlab">Choose your challenge</p>
-  <div class="diff-choice" id="welcomeDiff" role="group" aria-label="Choose challenge difficulty"></div>
-  <label class="rule-check"><input type="checkbox" id="welcomeStrict"> <span><b>Strict mode</b> — no distance swaps after starting.</span></label>
-  <ol class="how">
-    <li><b>A present unlocks every day</b> at midnight, from 1 December to Christmas Day.</li>
-    <li><b>Unwrap it</b> to reveal a random distance from your selected difficulty.</li>
-    <li><b>All 25 distances are drawn from your challenge pool</b> without changing its total kilometres.</li>
-    <li><b>Run it, then mark it completed</b> to fill your progress bar. Add a note if you like.</li>
-  </ol>
-  <p class="wnote">Difficulty and strict-mode settings lock after your first present. Locked presents stay secret. Progress saves on this device; export a backup periodically.</p>
-  <div class="wcount" id="wCount"></div>
-  <button class="btn go" id="wStart">Start Challenge</button>
+<div class="ov" id="wel" role="dialog" aria-modal="true" aria-label="Run Advent challenge welcome"><div class="sheet wel">
+  <section id="welcomeIntro" class="onboard-page">
+    <p class="onboard-step-label">STEP 1 OF 2 · THE CHALLENGE</p>
+    <div class="wgift" aria-hidden="true">🎁</div>
+    <div class="wtitle">Welcome to Run Advent!</div>
+    <p class="wsub">25 days. 25 presents. Your own Christmas running adventure.</p>
+    <ol class="how">
+      <li><b>Every day, December 1–25</b>, a new present unlocks at midnight.</li>
+      <li><b>Open your present</b> to reveal that day’s surprise running distance.</li>
+      <li><b>Complete your run</b> and mark it done to earn progress and achievements.</li>
+      <li><b>Go at your pace</b>: catch up on previous days, share progress with friends and celebrate at the finish.</li>
+    </ol>
+    <div class="welcome-feature"><b>🎯 Three difficulty levels</b><span>Beginner 75 km · Intermediate 125 km · Advanced 325 km</span><small>25 surprises in every challenge. Optional distance swaps, or Strict Mode for no swaps.</small></div>
+    <p class="wnote">Future presents stay secret. Your progress is saved on this device, with an exportable backup.</p>
+    <button class="btn go" id="wNext" type="button">Continue — choose my difficulty</button>
+  </section>
+  <section id="welcomeSetup" class="onboard-page" style="display:none">
+    <p class="onboard-step-label">STEP 2 OF 2 · CHOOSE YOUR CHALLENGE</p>
+    <div class="wtitle">Choose your difficulty</div>
+    <p class="wsub">Pick the distance goal that suits you before entering the calendar.</p>
+    <div class="diff-choice" id="welcomeDiff" role="group" aria-label="Choose challenge difficulty"></div>
+    <div class="wtotal"><b id="welcomeTotal">75–325 km</b><span>total challenge distance</span></div>
+    <label class="rule-check"><input type="checkbox" id="welcomeStrict"> <span><b>Strict mode</b> — no distance swaps after starting. Otherwise, you have two swaps between opened, unfinished runs.</span></label>
+    <p class="wnote" id="welcomeLockNote">Choose a difficulty to start. Your difficulty and Strict Mode lock after you open your first present.</p>
+    <div class="wcount" id="wCount"></div>
+    <div class="onboard-actions">
+      <button class="btn" id="wBack" type="button">← Back to rules</button>
+      <button class="btn go" id="wStart" type="button" disabled>Enter my calendar</button>
+    </div>
+  </section>
 </div></div>
 <div class="ov" id="resetDlg"><div class="sheet">
   <h2>Reset this challenge?</h2>
@@ -582,11 +609,13 @@ var DIFF={
  advanced:{name:'Advanced',total:325,desc:'Every distance from 1–25 km, exactly once',pool:Array.from({length:25},function(_,i){return i+1})}
 };
 var MAX_SWAPS=2;
+var onboardSelected=false;
+function onboardKey(){return 'runadv:challenge-selected:'+(preview?'preview':'real')+':'+YEAR}
 function dcfg(){return DIFF[st.difficulty]||DIFF.advanced}
 function totalKm(){return dcfg().total}
 function chooseDifficulty(which){
  if(!DIFF[which]||cnt(st.opened)>0){if(cnt(st.opened)>0)toast('Challenge already started. Back up and reset to change difficulty.');return}
- st.difficulty=which;syncAch(false);syncFinal(false);save();render();updateWelcome();
+ st.difficulty=which;onboardSelected=true;sSet(onboardKey(),'1');syncAch(false);syncFinal(false);save();render();updateWelcome();
 }
 function chooseStrict(value){
  if(cnt(st.opened)>0){toast('Strict mode is locked after the first present.');return}
@@ -595,7 +624,7 @@ function chooseStrict(value){
 function setDiffButtons(container){
  var root=document.getElementById(container);root.innerHTML='';
  Object.keys(DIFF).forEach(function(k){
-  var d=DIFF[k],b=document.createElement('button');b.type='button';b.className='diff-opt';b.setAttribute('aria-pressed',String((st.difficulty||'advanced')===k));
+  var d=DIFF[k],b=document.createElement('button');b.type='button';b.className='diff-opt';b.setAttribute('aria-pressed',String((st.difficulty||'advanced')===k&&(container!=='welcomeDiff'||onboardSelected||cnt(st.opened)>0)));
   b.disabled=cnt(st.opened)>0;
   var info=document.createElement('span'),nm=document.createElement('b'),sm=document.createElement('small'),dist=document.createElement('span');
   nm.textContent=d.name;sm.textContent=d.desc;dist.className='diff-km';dist.textContent=d.total+' km';info.appendChild(nm);info.appendChild(sm);b.appendChild(info);b.appendChild(dist);
@@ -603,13 +632,19 @@ function setDiffButtons(container){
  });
 }
 function updateWelcome(){
- document.getElementById('welcomeTotal').textContent=totalKm()+' km';
+ var begun=cnt(st.opened)>0,selected=onboardSelected||begun;
+ document.getElementById('welcomeTotal').textContent=selected?totalKm()+' km':'75–325 km';
  setDiffButtons('welcomeDiff');document.getElementById('welcomeStrict').checked=!!st.strict;
- document.getElementById('welcomeStrict').disabled=cnt(st.opened)>0;
+ document.getElementById('welcomeStrict').disabled=begun;
+ document.getElementById('welcomeLockNote').textContent=begun
+  ?'Your '+dcfg().name+' challenge is already in progress. Its difficulty and Strict Mode are locked to protect your saved runs. You can review your existing settings from the calendar.'
+  :selected?'You selected '+dcfg().name+' ('+totalKm()+' km). Difficulty and Strict Mode lock after you open your first present.':'Select one of the three difficulties to continue. Difficulty and Strict Mode lock after your first present.';
+ var btn=document.getElementById('wStart');btn.disabled=!selected;btn.textContent=begun?'Continue my challenge':'Enter my calendar';
 }
 function renderSettings(){
  var d=dcfg(),begun=cnt(st.opened)>0,left=Math.max(0,MAX_SWAPS-(st.swapsUsed||0));
  document.getElementById('modeTag').textContent=d.name+' · '+d.total+' km'+(st.strict?' · Strict':'');
+ document.getElementById('hubSettings').textContent=begun?'🎯 Review challenge settings':'🎯 View / change difficulty';
  document.getElementById('rulesSum').textContent=d.name+' · '+d.total+' km';
  document.getElementById('rulesDesc').textContent=d.desc+'. All 25 presents are included.';
  setDiffButtons('settingsDiff');document.getElementById('settingsStrict').checked=!!st.strict;
@@ -1015,14 +1050,28 @@ function tickCd(){
   if(i.ms<=0)checkDay();
 }
 setInterval(tickCd,1000);tickCd();
-function hasProgress(){try{var p=JSON.parse(sGet('runadv:real:'+YEAR)||'null');return !!(p&&p.opened&&Object.keys(p.opened).length)}catch(e){return false}}
-function showWelcome(first){
-  document.getElementById('wStart').textContent=first?'Start Challenge':'Back to my calendar';
-  tickCd();updateWelcome();document.getElementById('wel').classList.add('show');
+function welcomeStep(step){
+ var intro=step==='intro';
+ document.getElementById('welcomeIntro').style.display=intro?'block':'none';
+ document.getElementById('welcomeSetup').style.display=intro?'none':'block';
+ updateWelcome();
+ var card=document.querySelector('#wel .sheet');if(card)card.scrollTop=0;
 }
-document.getElementById('wStart').onclick=function(){sSet('runadv:welcomed','1');shut('wel');try{window.scrollTo(0,0)}catch(e){}};
-document.getElementById('how').onclick=function(){showWelcome(false)};
-document.getElementById('wel').onclick=function(e){if(e.target===document.getElementById('wel')&&sGet('runadv:welcomed'))shut('wel')};
+function showWelcome(){
+ // Previously completed or ongoing challenges remain intact, including older Stage 1–4 data.
+ onboardSelected=cnt(st.opened)>0||sGet(onboardKey())==='1';
+ tickCd();welcomeStep('intro');document.getElementById('wel').classList.add('show');
+ document.getElementById('wNext').focus({preventScroll:true});
+}
+document.getElementById('wNext').onclick=function(){welcomeStep('setup');document.getElementById('welcomeDiff').querySelector('.diff-opt:not(:disabled)')?.focus({preventScroll:true})};
+document.getElementById('wBack').onclick=function(){welcomeStep('intro');document.getElementById('wNext').focus({preventScroll:true})};
+document.getElementById('wStart').onclick=function(){
+ if(!(onboardSelected||cnt(st.opened)>0)){toast('Select a challenge difficulty first.');return}
+ sSet(onboardKey(),'1');sSet('runadv:welcomed','1');shut('wel');try{window.scrollTo(0,0)}catch(e){}
+ document.getElementById('hubSettings').focus({preventScroll:true});
+};
+document.getElementById('how').onclick=function(){showWelcome()};
+document.getElementById('hubSettings').onclick=function(){var d=document.getElementById('dpRules');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'});};
 /* ---- stage 3: achievements, weekly summary, stats ---- */
 var AC=[
  {id:'first',ic:'🎁',n:'First Footprints',t:'Complete your first run',k:'runs',v:1},
@@ -1574,8 +1623,12 @@ document.getElementById('cloudTest').onclick=async function(){
 
 buildTree();buildSnow();setMode(0);
 setInterval(function(){mode=(mode+1)%4;setMode(mode)},6000);
-load();socialLoad();syncAch(false);syncFinal(false);render();socialHandleIncoming();
-if(!sGet('runadv:welcomed')){if(hasProgress())sSet('runadv:welcomed','1');else showWelcome(true)}
+load();socialLoad();syncAch(false);syncFinal(false);render();
+var isFriendLink=/^#ra-friend=/.test(window.location.hash);
+socialHandleIncoming();
+// Always show the rules and difficulty selector on a normal visit.
+// Shared friend links open their import dialog first.
+if(!isFriendLink)showWelcome();
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(weave,150)});
 })();
 </script>
