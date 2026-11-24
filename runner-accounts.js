@@ -341,7 +341,8 @@
   el('accountPrivacy').value=profile.privacy||'private';
   el('accountLeaderboardOpt').checked=!!profile.leaderboard_opt_in;
   safeText(el('accountGreeting'),profile.display_name||'Runner');
-  safeText(el('accountProfileSummary'),'@'+(profile.username||'username not chosen')+' · '+(profile.privacy==='private'?'Private profile':profile.privacy==='friends'?'Friends-only preference':'Public profile preference'));
+  const privacyLabel={private:'Private profile',friends:'Friends only',public:'Public profile'}[profile.privacy];
+  safeText(el('accountProfileSummary'),profile.username?'@'+profile.username+' · '+privacyLabel:privacyLabel+' · Choose a username below so friends can recognise you.');
   safeText(el('accountPrivateEmail'),user?user.email:'');
  }
  async function fetchProfile(){
@@ -366,6 +367,7 @@
   lastSessionId=id;
   clearTimeout(saveTimer);consent=false;pendingChanges=false;
   user=next&&next.user||null;profile=null;remote=null;revision=0;
+  clearProfileFeedback();
   resetFriends();
   if(!user){setGuest();showAuth('signin');return;}
   ui.guest.hidden=true;ui.signed.hidden=false;ui.label.textContent='Account · signed in';
@@ -411,24 +413,63 @@
    if(r.data&&r.data.session)await sessionChange(r.data.session);
   }catch(err){msg(cloudIssue(err),'error');}finally{btn.disabled=false;}
  }
- async function saveProfile(e){
-  e.preventDefault();if(!client||!user)return;
-  const username=el('accountUsername').value.toLowerCase().trim();
-  const name=el('accountDisplayName').value.replace(/\s+/g,' ').trim();
-  const avatar=el('accountAvatar').value.trim();
-  if(username&&!/^[a-z0-9_]{3,24}$/.test(username)){msg('Username must contain 3–24 lowercase letters, numbers or underscores.','error');return;}
-  if(name.length<1||name.length>48){msg('Display name must be between 1 and 48 characters.','error');return;}
-  if(avatar){
-   try{if(new URL(avatar).protocol!=='https:')throw Error();}catch(e){msg('Profile photo must be a valid HTTPS URL.','error');return;}
+ function profileFeedback(text,type,field){
+  const feedback=el('accountProfileFeedback');
+  if(!feedback){if(text)msg(text,type);return;}
+  feedback.textContent=text;
+  feedback.className=text?'account-alert '+(type||''):'';
+  if(field){
+   field.setAttribute('aria-invalid','true');
+   field.setAttribute('aria-errormessage','accountProfileFeedback');
+   field.focus();
   }
-  let row={username:username||null,display_name:name,avatar_url:avatar||null,
+ }
+ function clearProfileFeedback(){
+  for(const field of el('accountProfileForm').querySelectorAll('[aria-invalid]')){
+   field.removeAttribute('aria-invalid');
+   field.removeAttribute('aria-errormessage');
+  }
+  profileFeedback('');
+ }
+ async function saveProfile(e){
+  e.preventDefault();
+  clearProfileFeedback();
+  if(!client||!user){profileFeedback('Sign in again to save your profile.','error');return;}
+  const usernameField=el('accountUsername'), nameField=el('accountDisplayName'), avatarField=el('accountAvatar');
+  const typed=usernameField.value.trim();
+  const username=typed.replace(/^@/,'').toLowerCase();
+  const name=nameField.value.replace(/\s+/g,' ').trim();
+  const avatar=avatarField.value.trim();
+  if(typed&&!/^[a-z0-9_]{3,24}$/.test(username)){
+   profileFeedback('Use 3–24 letters (a–z), digits (0–9) or underscores. For example: christmas_runner. Spaces and hyphens are not allowed.','error',usernameField);return;
+  }
+  if(name.length<1||name.length>48){
+   profileFeedback('Enter a display name of 1–48 characters. Spaces are allowed here.','error',nameField);return;
+  }
+  if(avatar){
+   try{if(new URL(avatar).protocol!=='https:')throw Error();}catch{
+    profileFeedback('Enter a photo link starting with https:// or leave the photo field empty.','error',avatarField);return;
+   }
+  }
+  const button=e.currentTarget.querySelector('button[type="submit"]');
+  if(button.disabled)return;
+  const owner=user.id;
+  button.disabled=true;
+  profileFeedback('Saving your profile…');
+  const row={username:username||null,display_name:name,avatar_url:avatar||null,
     privacy:el('accountPrivacy').value,leaderboard_opt_in:el('accountLeaderboardOpt').checked};
   try{
-   const {data,error}=await client.from('runner_profiles').update(row).eq('id',user.id)
+   const {data,error}=await client.from('runner_profiles').update(row).eq('id',owner)
     .select('id,username,display_name,avatar_url,privacy,leaderboard_opt_in,created_at').single();
    if(error)throw error;
-   profile=data;updateProfileUi();refreshFriends();msg('✓ Your runner profile has been updated.','success');
-  }catch(e){msg(e.code==='23505'?'That username is already taken. Choose another.':cloudIssue(e),'error');}
+   if(user?.id!==owner)return;
+   profile=data;updateProfileUi();refreshFriends();
+   profileFeedback(data.username?'Profile saved. Your username is @'+data.username+'.':'Profile saved without a username.','success');
+  }catch(error){
+   if(user?.id!==owner)return;
+   if(error.code==='23505')profileFeedback('@'+username+' is already taken. Try adding a number or choosing another name.','error',usernameField);
+   else profileFeedback('Could not save your profile. '+cloudIssue(error),'error');
+  }finally{button.disabled=false;}
  }
  async function forgot(e){
   e.preventDefault();if(!client)return;
@@ -493,6 +534,8 @@
  el('accountResetCancel').onclick=()=>showAuth('signin');
  el('accountResetForm').addEventListener('submit',forgot);
  el('accountNewPasswordForm').addEventListener('submit',recoverPassword);
+ el('accountProfileForm').noValidate=true;
+ el('accountProfileForm').addEventListener('input',clearProfileFeedback);
  el('accountProfileForm').addEventListener('submit',saveProfile);
  el('accountSignOut').onclick=signOut;
  el('accountRefresh').onclick=async()=>{

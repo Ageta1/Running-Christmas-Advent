@@ -458,13 +458,15 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
             <div class="account-row"><b id="accountGreeting">Runner</b><span class="account-badge">Signed in</span></div>
             <p class="account-hint" id="accountPrivateEmail"></p>
             <div class="account-row" style="margin:8px 0"><img id="accountAvatarPreview" alt="Runner profile image" src="" width="44" height="44" style="display:none;object-fit:cover;border-radius:50%;border:1px solid rgba(255,212,71,.4)"><div class="account-stat" id="accountProfileSummary" style="flex:1">Loading your private profile…</div></div>
-            <form id="accountProfileForm" class="account-fields">
-              <label>Username (3–24 letters, numbers or underscores)<input id="accountUsername" class="account-input" minlength="3" maxlength="24" pattern="[a-z0-9_]{3,24}" autocomplete="username" placeholder="christmas_runner"></label>
+            <form id="accountProfileForm" class="account-fields" novalidate>
+              <label>Username<input id="accountUsername" class="account-input" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" aria-describedby="accountUsernameHelp" placeholder="e.g. christmas_runner"></label>
+              <p class="account-hint" id="accountUsernameHelp">Use 3–24 letters, numbers or underscores. Capital letters are saved as lowercase. You can add a username with any privacy setting.</p>
               <label>Display name<input id="accountDisplayName" class="account-input" maxlength="48" required></label>
               <label>Profile photo URL (optional HTTPS link)<input id="accountAvatar" class="account-input" type="url" maxlength="500" placeholder="https://..."></label>
               <label>Profile privacy<select id="accountPrivacy" class="account-input"><option value="private">Private</option><option value="friends">Friends only</option><option value="public">Public</option></select></label>
               <label class="account-copy"><input type="checkbox" id="accountLeaderboardOpt"> Show my synced totals on the public leaderboard (requires a Public profile and username)</label>
               <button type="submit" class="btn ok">Save profile</button>
+              <p id="accountProfileFeedback" role="status" aria-live="polite"></p>
             </form>
             <div class="account-divider"></div>
             <b>☁️ Your private Christmas backup</b>
@@ -1769,6 +1771,6 @@ document.getElementById('accountShortcut').onclick=function(){var e=document.get
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(weave,150)});
 })();
 </script>
-<script src="./runner-accounts.js?v=8"></script>
+<script src="./runner-accounts.js?v=8.1"></script>
 </body>
 </html>
