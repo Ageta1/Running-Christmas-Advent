@@ -133,7 +133,7 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
 .dp summary::-webkit-details-marker{display:none}
 .dp summary em{font-style:normal;font-weight:600;font-size:13px;color:var(--gold);margin-left:auto;text-align:right}
 .dp summary::after{content:"›";font-size:22px;line-height:1;color:var(--mute);transform:rotate(90deg);transition:transform .2s}
-.dp[open] summary::after{transform:rotate(-90deg)}
+.dp[open] > summary::after, #manualBoard[open] > summary::after{transform:rotate(-90deg)}
 .dpb{padding:2px 14px 14px}
 .ach{display:grid;grid-template-columns:1fr;gap:8px}
 @media (min-width:430px){.ach{grid-template-columns:1fr 1fr}}
@@ -216,6 +216,24 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
 .sheet .btn.sh{background:#1f4e9a;color:#fff;border:0;font-weight:700}
 .sheet .btn:disabled{opacity:.5}
 @media (prefers-reduced-motion:reduce){#fconf{display:none}.ftree{animation:none}}
+/* stage 5: difficulty, challenge rules, swaps and archive */
+.diff-choice{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+.diff-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:12px;border:1px solid rgba(255,212,71,.35);border-radius:12px;background:rgba(255,255,255,.06);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.diff-opt b{font-size:15px;display:block}.diff-opt small{display:block;color:var(--mute);font-size:12px;line-height:1.4;margin-top:2px}
+.diff-opt .diff-km{color:var(--gold);font-size:18px;font-weight:800;white-space:nowrap}
+.diff-opt[aria-pressed="true"]{border:2px solid var(--gold);background:rgba(255,212,71,.13);padding:11px}
+.diff-opt:disabled{opacity:.62;cursor:not-allowed}
+.rule-check{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.45;margin:10px 0;cursor:pointer}
+.rule-check input{width:19px;height:19px;accent-color:var(--gold);flex:none;margin-top:2px}
+.rule-note{color:var(--mute);font-size:12.5px;line-height:1.5;margin:6px 0 10px}
+.mode-tag{display:inline-block;border:1px solid rgba(255,212,71,.5);background:rgba(255,212,71,.11);border-radius:20px;font-size:12px;font-weight:700;padding:5px 11px;margin:2px auto 12px;color:var(--gold)}
+.rule-head{text-align:center}
+.cfg-warning{border:1px solid rgba(255,159,28,.45);border-radius:10px;background:rgba(255,159,28,.08);padding:10px 12px;color:var(--ink);font-size:13px;line-height:1.55}
+.sheet select,.sheet input[type=text]{width:100%;background:#0a1a12;color:var(--ink);border:1px solid rgba(255,212,71,.45);border-radius:10px;min-height:44px;padding:10px;font:inherit;font-size:16px}
+.swap-pane{margin-top:12px;padding:12px;border:1px solid rgba(255,212,71,.32);background:rgba(255,255,255,.045);border-radius:12px;text-align:left}
+.swap-pane .btn{width:100%;margin-top:8px}
+.archive-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:13.5px}
+.archive-row small{display:block;color:var(--mute);font-size:12px;margin-top:3px}
 /* tree */
 .L{animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:.15}45%,55%{opacity:1}}
@@ -254,6 +272,84 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
 #conf.fire i{animation:burst 1.6s cubic-bezier(.15,.7,.4,1) forwards}
 @keyframes burst{0%{opacity:1;transform:translate(0,0) rotate(0)}45%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--r))}100%{opacity:0;transform:translate(calc(var(--dx)*1.2),calc(var(--dy) + 230px)) rotate(calc(var(--r)*2))}}
 @media (prefers-reduced-motion:reduce){#snow{display:none}.L,.sw,.star,.avail{animation:none!important}.L{opacity:.8}}
+
+/* STAGE 5.5 – shareable, local-only friends board */
+.social-note{font-size:12.5px;color:var(--mute);line-height:1.55;margin:8px 0 12px}
+.social-actionbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.social-actionbar .btn{flex:1;min-width:125px}
+.social-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,212,71,.25);border-radius:12px;padding:12px;margin:10px 0}
+.social-card .social-label{font-size:12px;color:var(--mute);margin:0 0 5px}
+.social-card strong{font-size:17px;color:var(--gold)}
+.social-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.1)}
+.social-row:last-child{border:0}
+.social-rank{font-size:14px;font-weight:800;color:var(--gold);text-align:center}
+.social-runner{min-width:0}
+.social-runner b{display:block;overflow-wrap:anywhere;font-size:14px}
+.social-runner small{display:block;color:var(--mute);font-size:11.5px;line-height:1.55}
+.social-score{text-align:right;white-space:nowrap}
+.social-score b{display:block;font-size:16px;color:var(--gold)}
+.social-score small{display:block;font-size:11px;color:var(--mute)}
+.social-mini{border:1px solid rgba(255,212,71,.3);background:transparent;color:var(--ink);border-radius:12px;font-size:11px;padding:5px 9px;cursor:pointer;margin-top:5px;min-height:32px}
+.social-control{width:100%;background:#0a1a12;color:var(--ink);border:1px solid rgba(255,212,71,.45);border-radius:9px;min-height:44px;padding:9px 11px;font-size:16px}
+.social-filter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.social-filter label{font-size:12px;color:var(--mute);display:block}
+.social-filter select{margin-top:4px;font-size:14px}
+.social-empty{padding:16px 8px;text-align:center;font-size:13px;color:var(--mute)}
+.social-code{font:12px/1.4 ui-monospace,monospace;width:100%;overflow-wrap:anywhere;white-space:pre-wrap;word-break:break-all;background:#07180f;padding:9px;border:1px dashed rgba(255,212,71,.35);border-radius:8px;max-height:100px;overflow:auto;user-select:all}
+.social-modal{max-width:390px}
+.social-modal label{display:block;text-align:left;color:var(--mute);font-size:13px;margin:12px 0 4px}
+.social-modal .btn{margin-top:8px}
+.social-compare{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
+.social-compare span{border:1px solid rgba(255,212,71,.25);padding:9px 3px;border-radius:8px;font-size:12px}
+.social-compare b{display:block;font-size:18px;color:var(--gold)}
+.social-divider{border-top:1px solid rgba(255,255,255,.15);margin:15px 0}
+.social-mode{font-size:12px;color:var(--gold);margin-left:6px}
+@media(max-width:360px){.social-row{grid-template-columns:20px minmax(0,1fr) auto;gap:5px}.social-score b{font-size:14px}}
+
+/* Stage 6 welcome fix: two visible onboarding steps and discoverable difficulty settings. */
+.onboard-step-label{text-align:center;color:var(--gold);font-size:11px;font-weight:800;letter-spacing:1.5px;margin:0 0 10px}
+.onboard-page{min-width:0}
+.welcome-feature{border:1px solid rgba(255,212,71,.4);background:rgba(255,212,71,.08);border-radius:12px;padding:12px;margin:10px 0;line-height:1.5}
+.welcome-feature b,.welcome-feature span,.welcome-feature small{display:block}
+.welcome-feature b{color:var(--gold);font-size:15px}
+.welcome-feature span{font-weight:700;font-size:13px;margin:4px 0}
+.welcome-feature small{color:var(--mute);font-size:12px}
+.onboard-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:8px;margin-top:12px}
+.onboard-actions .btn{margin:0;min-width:0;font-size:13px;padding:10px 5px}
+#wel .btn:disabled{opacity:.48;cursor:not-allowed}
+.hub-rules{display:block;margin:0 auto 12px;font-size:12px;min-height:40px;border:1px solid rgba(255,212,71,.45)}
+#wel .diff-opt:not(:disabled):hover{border-color:var(--gold)}
+@media(max-width:350px){.onboard-actions{grid-template-columns:1fr}.welcome-feature{padding:9px}.wel{padding:16px 13px}}
+/* Stage 6: backend setup is independent of guest/local challenge functionality. */
+.cloud-card{border:1px solid rgba(255,212,71,.33);border-radius:12px;padding:12px;background:rgba(255,255,255,.055);margin:8px 0}
+.cloud-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cloud-state{font-size:12px;font-weight:700;border:1px solid rgba(255,212,71,.42);border-radius:20px;padding:5px 10px;color:var(--gold)}
+.cloud-note{font-size:12.5px;color:var(--mute);line-height:1.6;margin:9px 0}
+.cloud-value{font-weight:700;color:var(--ink)}
+.cloud-result{min-height:22px;margin:10px 0 0;font-size:12.5px;line-height:1.5;color:var(--mute)}
+.cloud-result.success{color:#8befb6}.cloud-result.error{color:#ffbbaf}
+.cloud-card .btn{width:100%;margin-top:8px}
+
+/* Stage 7 account UI – keeps the existing Christmas theme and onboarding intact. */
+.account-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,212,71,.32);border-radius:12px;padding:13px;margin:8px 0}
+.account-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.account-hint{font-size:12.5px;line-height:1.6;color:var(--mute);margin:9px 0}
+.account-alert{font-size:13px;line-height:1.5;border-radius:9px;padding:9px 10px;margin:9px 0;background:rgba(255,255,255,.08);white-space:pre-line}
+.account-alert.success{color:#a5efbe;border:1px solid rgba(95,210,140,.45)}
+.account-alert.error{color:#ffbcb0;border:1px solid rgba(255,130,120,.38)}
+.account-fields{display:grid;gap:9px;margin:10px 0}
+.account-fields label{display:grid;gap:5px;color:var(--ink);font-size:12px;font-weight:700}
+.account-input{width:100%;border:1px solid rgba(255,212,71,.35);border-radius:9px;padding:11px;background:rgba(5,20,14,.85);color:#fff;font:inherit;min-width:0}
+.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.account-actions .btn{flex:1 1 auto;white-space:normal}
+.account-card .btn{min-height:40px}
+.account-badge{font-size:11px;color:var(--gold);font-weight:700}
+.account-stat{padding:8px;background:rgba(255,255,255,.05);border-radius:8px;font-size:12.5px;line-height:1.55}
+.account-card [hidden]{display:none!important}
+.account-divider{height:1px;background:rgba(255,212,71,.19);margin:14px 0}
+.account-link{border:0;background:none;color:var(--gold);text-decoration:underline;font:inherit;cursor:pointer;padding:5px}
+.account-copy{font-size:11.5px;color:var(--mute);line-height:1.5}
+@media (max-width:370px){.account-actions .btn{flex-basis:100%}}
 </style>
 </head>
 <body>
@@ -264,11 +360,12 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
   <p class="sub" id="sub"></p>
   <div class="cd" id="cd" role="timer"><span class="cdl" id="cdL"></span><b id="cdT"></b></div>
   <div class="prog">
-    <div class="ptop"><b><em id="pKm">0</em> / 325 km</b><span id="pPct">0%</span></div>
+    <div class="ptop"><b><em id="pKm">0</em> / <span id="pTarget">325</span> km</b><span id="pPct">0%</span></div>
     <div class="bar" id="pBar" role="progressbar" aria-label="Distance completed" aria-valuemin="0" aria-valuemax="325" aria-valuenow="0"><i id="pFill"></i></div>
     <div class="pbot"><span id="pRuns">0 of 25 runs completed</span><span id="pSave">Saves automatically</span></div>
   </div>
   <div class="fcard" id="fcard"><div><b>🏆 Challenge complete!</b><span>Merry Christmas! Every run finished.</span></div><div class="fb"><button class="btn go" id="fcView">Celebrate</button><button class="btn" id="fcCert">Certificate</button></div></div>
+  <div class="rule-head"><span class="mode-tag" id="modeTag">Advanced · 325 km</span><button type="button" class="btn hub-rules" id="hubSettings" aria-controls="dpRules">🎯 View / change difficulty</button></div>
   <div class="stats">
     <div class="stat"><b id="sOpen">0/25</b><span>Presents</span></div>
     <div class="stat"><b id="sRev">0</b><span>Km revealed</span></div>
@@ -277,6 +374,141 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
   <div class="grid" id="grid"></div>
   <div class="legend"><span><i class="lg l"></i>Locked</span><span><i class="lg a"></i>Ready to unwrap</span><span><i class="lg o"></i>Opened, run to do</span><span><i class="lg c"></i>Completed</span></div>
   <section class="dash" aria-label="Achievements and statistics">
+    <details class="dp" id="dpRules"><summary><span>🎯 Challenge settings</span><em id="rulesSum">Advanced · 325 km</em></summary>
+      <div class="dpb">
+        <p class="rule-note" id="rulesDesc"></p>
+        <div class="diff-choice" id="settingsDiff" role="group" aria-label="Choose challenge difficulty"></div>
+        <label class="rule-check"><input type="checkbox" id="settingsStrict"> <span><b>Strict mode</b><br>Disable distance swaps for this challenge.</span></label>
+        <p class="rule-note" id="rulesLock"></p>
+        <div id="swapUsage" class="rule-note"></div>
+        <button class="btn warn" id="resetOpen" type="button" style="display:none">Reset challenge to change difficulty</button>
+        <button class="btn" id="restoreReset" type="button" style="display:none">Restore last reset (this device)</button>
+        <p class="rule-note">Settings apply separately to real and preview calendars. Export a backup before resetting. Account owners can opt in to private syncing from Runner Account; guest changes remain on this device.</p>
+      </div></details>
+
+    <!-- STAGE 5.5 – friends board works through manually shared progress snapshots, no server -->
+    <details class="dp" id="dpSocial">
+      <summary><span>👟 Friends board</span><em id="liveSummary">Friends &amp; rankings</em></summary>
+      <div class="dpb">
+        <p class="social-note" id="liveGuest">Sign in to see friend requests and live rankings. You can also share a progress link below.</p>
+        <div id="liveMembers" hidden>
+          <div class="social-card">
+            <form id="liveAdd" class="account-fields">
+              <label>Friend’s username<input id="liveUsername" class="account-input" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="25" placeholder="@running_friend" required></label>
+              <button type="submit" class="btn ok">Send friend request</button>
+            </form>
+            <p class="account-hint">To exchange requests, save a username in Runner account and choose Friends only or Public.</p>
+            <div id="liveConnections"></div>
+          </div>
+          <label class="social-label">Leaderboard<select class="social-control" id="liveScope"><option value="friends">My friends</option><option value="public">Public · top 100</option></select></label>
+          <p class="social-note">Ranked by percentage of the annual kilometre target completed. Totals are self-reported and refresh every 30 seconds while this board is open. To include your runs, sync your real calendar in Runner account.</p>
+          <div id="liveRows"></div>
+          <button type="button" class="btn" id="liveRefresh">Refresh board</button>
+          <p class="social-note" id="liveStatus" role="status"></p>
+        </div>
+        <details id="manualBoard"><summary><span>Shared progress links</span><em id="socialSummary">Local snapshots</em></summary>
+        <p class="social-note">Compare your challenge with friends. Share a link to your current totals, then have your friends send theirs. <b>These rankings are saved only on this device and do not update automatically.</b></p>
+        <div class="social-card">
+          <p class="social-label">Your public display name (shared with anyone you send a link to)</p>
+          <input class="social-control" id="socialName" maxlength="32" type="text" autocomplete="nickname" placeholder="Enter your running name" aria-label="Your running display name">
+          <div class="social-actionbar">
+            <button class="btn ok" id="socialShare" type="button">Share my progress</button>
+            <button class="btn" id="socialImport" type="button">Add a friend</button>
+          </div>
+          <div class="social-note" id="socialMyStats" aria-live="polite"></div>
+        </div>
+        <div class="social-filter">
+          <label>Rank by<select class="social-control" id="socialSort"><option value="percent">Challenge %</option><option value="km">Kilometres run</option><option value="runs">Runs completed</option></select></label>
+          <label>Difficulty<select class="social-control" id="socialDifficulty"><option value="all">All difficulties</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
+        </div>
+        <div id="socialRows" aria-live="polite"></div>
+        <p class="social-note">Self-reported progress. Sharing a new link lets friends refresh your ranking manually.</p>
+        </details>
+      </div>
+    </details>
+
+    <!-- Stage 7: optional authenticated accounts and explicit cloud sync. -->
+    <details class="dp" id="dpAccount">
+      <summary><span>👤 Runner account</span><em id="accountLabel">Guest · local</em></summary>
+      <div class="dpb">
+        <div class="account-card">
+          <p id="accountStatus" class="account-alert" role="status" aria-live="polite">Your Christmas calendar works without an account. No progress is uploaded automatically.</p>
+          <div id="accountGuest">
+            <p class="account-hint">Create an optional account to keep a private profile and save your calendar to the cloud. Your current local runs stay on this device until you choose to sync them.</p>
+            <div class="account-actions" role="group" aria-label="Runner account options">
+              <button type="button" class="btn on" id="accountTabSignIn">Sign in</button>
+              <button type="button" class="btn" id="accountTabSignUp">Create account</button>
+            </div>
+            <form id="accountAuthForm" class="account-fields">
+              <label>Email address<input id="accountEmail" class="account-input" type="email" autocomplete="email" maxlength="254" required></label>
+              <label>Password<input id="accountPassword" class="account-input" type="password" autocomplete="current-password" minlength="8" required></label>
+              <button type="submit" class="btn go" id="accountAuthSubmit">Sign in</button>
+            </form>
+            <button type="button" class="account-link" id="accountForgot">Forgot password?</button>
+            <div id="accountResetPane" hidden>
+              <p class="account-hint">Enter your account email and we'll request a password reset link.</p>
+              <form id="accountResetForm" class="account-fields">
+                <label>Email address<input id="accountResetEmail" class="account-input" type="email" autocomplete="email" maxlength="254" required></label>
+                <button type="submit" class="btn">Send reset link</button>
+              </form>
+              <button type="button" class="account-link" id="accountResetCancel">Back to sign in</button>
+            </div>
+          </div>
+          <div id="accountSignedIn" hidden>
+            <div class="account-row"><b id="accountGreeting">Runner</b><span class="account-badge">Signed in</span></div>
+            <p class="account-hint" id="accountPrivateEmail"></p>
+            <div class="account-row" style="margin:8px 0"><img id="accountAvatarPreview" alt="Runner profile image" src="" width="44" height="44" style="display:none;object-fit:cover;border-radius:50%;border:1px solid rgba(255,212,71,.4)"><div class="account-stat" id="accountProfileSummary" style="flex:1">Loading your private profile…</div></div>
+            <form id="accountProfileForm" class="account-fields">
+              <label>Username (3–24 letters, numbers or underscores)<input id="accountUsername" class="account-input" minlength="3" maxlength="24" pattern="[a-z0-9_]{3,24}" autocomplete="username" placeholder="christmas_runner"></label>
+              <label>Display name<input id="accountDisplayName" class="account-input" maxlength="48" required></label>
+              <label>Profile photo URL (optional HTTPS link)<input id="accountAvatar" class="account-input" type="url" maxlength="500" placeholder="https://..."></label>
+              <label>Profile privacy<select id="accountPrivacy" class="account-input"><option value="private">Private</option><option value="friends">Friends only</option><option value="public">Public</option></select></label>
+              <label class="account-copy"><input type="checkbox" id="accountLeaderboardOpt"> Show my synced totals on the public leaderboard (requires a Public profile and username)</label>
+              <button type="submit" class="btn ok">Save profile</button>
+            </form>
+            <div class="account-divider"></div>
+            <b>☁️ Your private Christmas backup</b>
+            <p class="account-hint">Your backup is private. Friends only and Public profiles can share synced totals with accepted friends. Only the real calendar can sync; Preview Mode never uploads.</p>
+            <div class="account-stat" id="accountCloudSummary" aria-live="polite">Checking cloud progress…</div>
+            <div class="account-actions">
+              <button type="button" class="btn" id="accountRefresh">Compare progress</button>
+              <button type="button" class="btn ok" id="accountUpload">Use this device → cloud</button>
+              <button type="button" class="btn" id="accountDownload">Use cloud → this device</button>
+            </div>
+            <p class="account-copy" id="accountSyncExplanation">Cloud sync requires one explicit first-time choice. Afterwards, local edits are backed up automatically with conflict checks.</p>
+            <button type="button" class="btn" id="accountSyncPause">Pause automatic backup</button>
+            <button type="button" class="btn" id="accountSafetyDownload">Download last safety backup</button>
+            <div class="account-divider"></div>
+            <div id="accountRecoveryPane" hidden>
+              <p class="account-alert">Password recovery: enter your new password below.</p>
+              <form id="accountNewPasswordForm" class="account-fields">
+                <label>New password<input id="accountNewPassword" class="account-input" type="password" autocomplete="new-password" minlength="8" required></label>
+                <button type="submit" class="btn ok">Update password</button>
+              </form>
+            </div>
+            <button class="btn" id="accountSignOut" type="button">Sign out</button>
+          </div>
+        </div>
+        <p class="account-copy">Private hides your totals from other runners. Friends only and Public let runners who know your username send requests. To appear on the public board for signed-in runners, choose Public and tick the leaderboard box.</p>
+      </div>
+    </details>
+
+    <!-- STAGE 6: safe cloud architecture; no guest data is transmitted or synced. -->
+    <details class="dp" id="dpCloud">
+      <summary><span>☁️ Cloud foundation</span><em id="cloudBadge">Local mode</em></summary>
+      <div class="dpb">
+        <div class="cloud-card">
+          <div class="cloud-row"><b>Backend readiness</b><span class="cloud-state" id="cloudState">Local only</span></div>
+          <p class="cloud-note" id="cloudInfo">This calendar currently saves on your device.</p>
+          <p class="cloud-note"><span class="cloud-value" id="cloudLocalSummary">No data sent to the cloud</span></p>
+          <button class="btn" type="button" id="cloudTest">Check Supabase setup</button>
+          <p id="cloudResult" class="cloud-result" role="status" aria-live="polite"></p>
+        </div>
+        <p class="cloud-note"><b>Privacy first:</b> Your account backup stays private. You control who can see your synced totals in Runner account.</p>
+      </div>
+    </details>
+    <details class="dp" id="dpArchive"><summary><span>🗂️ Previous years</span><em id="archiveSum">Local archive</em></summary>
+      <div class="dpb"><p class="rule-note">Previous years remain saved in this browser. Clearing browser data may remove them, so keep backups.</p><div id="archiveRows"></div></div></details>
     <details class="dp" id="dpA"><summary><span>🏅 Achievements</span><em id="sumA"></em></summary>
       <div class="dpb"><div class="ach" id="achGrid"></div></div></details>
     <details class="dp" id="dpW"><summary><span>📅 Weekly summary</span><em id="sumW"></em></summary>
@@ -288,12 +520,14 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
     <details class="dp" id="dpS"><summary><span>📊 My stats</span><em id="sumS"></em></summary>
       <div class="dpb"><div class="tiles" id="tiles"></div></div></details>
   </section>
-  <p class="hint">Unwrap each day’s present to reveal your run. Every distance from 1 to 25 km appears exactly once. Tap an unwrapped present to see its run details, add a note and mark it completed.</p>
+  <p class="hint" id="challengeHint">Unwrap each day’s present to reveal your run. Every distance from 1 to 25 km appears exactly once. Tap an unwrapped present to see its details and mark it completed.</p>
   <div class="tools">
     <button class="btn strava" id="rec">Record on Strava</button>
     <a class="btn" href="https://www.strava.com/upload/manual" target="_blank" rel="noopener">Add manual activity</a>
   </div>
   <div class="tools">
+    <button class="btn" id="socialShortcut">👟 Friends</button>
+    <button class="btn" type="button" id="accountShortcut">👤 My account</button>
     <button class="btn" id="how">How it works</button>
     <button class="btn" id="exp">Export backup</button>
     <button class="btn" id="imp">Import backup</button>
@@ -326,6 +560,16 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
     <button class="btn ok" id="dDone">Mark Run Completed</button>
     <button class="btn" id="dUndo">Undo completion</button>
     <button class="btn sh" id="dShare">Share this run</button>
+    <div id="dSwapBox" class="swap-pane" style="display:none">
+      <b>🔁 Swap two opened runs</b>
+      <p class="rule-note">Only opened, incomplete presents can be swapped. No locked distance is revealed. You have <span id="swapRemain">2</span> swaps remaining.</p>
+      <label class="nlab" for="swapTarget">Swap with</label>
+      <select id="swapTarget"></select>
+      <button class="btn" id="swapAsk" type="button">Swap distances</button>
+      <div id="swapConfirm" style="display:none"><p class="msg" id="swapMsg"></p>
+        <button class="btn warn" id="swapYes" type="button">Yes, use one swap</button>
+        <button class="btn" id="swapNo" type="button">Cancel swap</button></div>
+    </div>
   </div>
   <div id="dConf" style="display:none">
     <p class="msg" id="dConfMsg"></p>
@@ -334,20 +578,44 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
   </div>
   <button class="btn" id="dClose">Close</button>
 </div></div>
-<div class="ov" id="wel"><div class="sheet wel">
-  <div class="wgift">🎁</div>
-  <div class="wtitle">Run Advent</div>
-  <p class="wsub">25 days. 25 presents. One big Christmas challenge.</p>
-  <div class="wtotal"><b>325 km</b><span>total challenge distance</span></div>
-  <ol class="how">
-    <li><b>A present unlocks every day</b> at midnight, from 1 December to Christmas Day.</li>
-    <li><b>Unwrap it</b> to reveal your run for the day, anywhere from 1 to 25 km.</li>
-    <li><b>Every distance appears exactly once</b>, so no two days are the same.</li>
-    <li><b>Run it, then mark it completed</b> to fill your progress bar. Add a note if you like.</li>
-  </ol>
-  <p class="wnote">Distances stay secret until you unwrap each present. Progress saves on this device, so use Export backup now and then to keep a copy.</p>
-  <div class="wcount" id="wCount"></div>
-  <button class="btn go" id="wStart">Start Challenge</button>
+<div class="ov" id="wel" role="dialog" aria-modal="true" aria-label="Run Advent challenge welcome"><div class="sheet wel">
+  <section id="welcomeIntro" class="onboard-page">
+    <p class="onboard-step-label">STEP 1 OF 2 · THE CHALLENGE</p>
+    <div class="wgift" aria-hidden="true">🎁</div>
+    <div class="wtitle">Welcome to Run Advent!</div>
+    <p class="wsub">25 days. 25 presents. Your own Christmas running adventure.</p>
+    <ol class="how">
+      <li><b>Every day, December 1–25</b>, a new present unlocks at midnight.</li>
+      <li><b>Open your present</b> to reveal that day’s surprise running distance.</li>
+      <li><b>Complete your run</b> and mark it done to earn progress and achievements.</li>
+      <li><b>Go at your pace</b>: catch up on previous days, share progress with friends and celebrate at the finish.</li>
+    </ol>
+    <div class="welcome-feature"><b>🎯 Three difficulty levels</b><span>Beginner 75 km · Intermediate 125 km · Advanced 325 km</span><small>25 surprises in every challenge. Optional distance swaps, or Strict Mode for no swaps.</small></div>
+    <p class="wnote">Future presents stay secret. Your progress is saved on this device, with an exportable backup.</p>
+    <button class="btn go" id="wNext" type="button">Continue — choose my difficulty</button>
+  </section>
+  <section id="welcomeSetup" class="onboard-page" style="display:none">
+    <p class="onboard-step-label">STEP 2 OF 2 · CHOOSE YOUR CHALLENGE</p>
+    <div class="wtitle">Choose your difficulty</div>
+    <p class="wsub">Pick the distance goal that suits you before entering the calendar.</p>
+    <div class="diff-choice" id="welcomeDiff" role="group" aria-label="Choose challenge difficulty"></div>
+    <div class="wtotal"><b id="welcomeTotal">75–325 km</b><span>total challenge distance</span></div>
+    <label class="rule-check"><input type="checkbox" id="welcomeStrict"> <span><b>Strict mode</b> — no distance swaps after starting. Otherwise, you have two swaps between opened, unfinished runs.</span></label>
+    <p class="wnote" id="welcomeLockNote">Choose a difficulty to start. Your difficulty and Strict Mode lock after you open your first present.</p>
+    <div class="wcount" id="wCount"></div>
+    <div class="onboard-actions">
+      <button class="btn" id="wBack" type="button">← Back to rules</button>
+      <button class="btn go" id="wStart" type="button" disabled>Enter my calendar</button>
+    </div>
+  </section>
+</div></div>
+<div class="ov" id="resetDlg"><div class="sheet">
+  <h2>Reset this challenge?</h2>
+  <p class="cfg-warning">This will remove all opened presents, completed runs, notes, achievements and swaps for the <b id="resetMode">real</b> calendar. This cannot be undone using the calendar itself. Export a backup first.</p>
+  <label class="nlab" for="resetWord">Type RESET to confirm</label>
+  <input type="text" id="resetWord" autocomplete="off" autocapitalize="characters" placeholder="RESET">
+  <button class="btn warn" id="resetYes" disabled>Reset this challenge</button>
+  <button class="btn" id="resetNo">Cancel</button>
 </div></div>
 <div class="ov" id="bk"><div class="sheet">
   <h2 id="bTitle"></h2>
@@ -401,7 +669,37 @@ button,.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:tran
 </div></div>
 <div id="achb" role="status" aria-live="polite"><div class="achi" id="achI">🎁</div><div><small>Achievement unlocked!</small><b id="achN"></b></div>
   <i class="sp" style="--x:-40px;--y:-34px"></i><i class="sp" style="--x:-8px;--y:-48px"></i><i class="sp" style="--x:28px;--y:-40px"></i><i class="sp" style="--x:50px;--y:-8px"></i><i class="sp" style="--x:44px;--y:28px"></i><i class="sp" style="--x:12px;--y:44px"></i><i class="sp" style="--x:-28px;--y:40px"></i><i class="sp" style="--x:-50px;--y:6px"></i></div>
+
+<!-- STAGE 5.5: manual social sharing / consent -->
+<div class="ov" id="socialDlg"><div class="sheet social-modal" role="dialog" aria-modal="true" aria-labelledby="socialTitle">
+  <h2 id="socialTitle">👟 Friends board</h2>
+  <p class="msg" id="socialMessage"></p>
+  <div id="socialSharePane" style="display:none">
+    <div class="social-compare" id="socialShareStats"></div>
+    <p class="social-note">Anyone with this link can see your <b>display name, difficulty, completed kilometres and completed run count</b>. It does not include notes, routes, email, unopened distances or your backup data. Your friend must accept it to add you.</p>
+    <div class="social-code" id="socialLinkCode"></div>
+    <button class="btn ok" id="socialCopy">Copy progress link</button>
+    <button class="btn" id="socialNative">Share via phone…</button>
+  </div>
+  <div id="socialImportPane" style="display:none">
+    <label for="socialLinkInput">Paste a friend's Run Advent progress link or code</label>
+    <textarea id="socialLinkInput" maxlength="3500" style="height:90px" placeholder="Paste their shared link here"></textarea>
+    <button class="btn ok" id="socialCheck">Review friend's progress</button>
+  </div>
+  <div id="socialAcceptPane" style="display:none">
+    <div class="social-compare" id="socialFriendStats"></div>
+    <p class="social-note" id="socialFriendInfo"></p>
+    <p class="social-note">Only save this snapshot if you recognise the sender. It will not update until they share another link. Your device stores it locally.</p>
+    <button class="btn ok" id="socialAccept">Save friend's progress</button>
+    <button class="btn" id="socialCancel">Cancel</button>
+  </div>
+  <p class="social-note" id="socialModalStatus" role="status" aria-live="polite"></p>
+  <button class="btn" id="socialClose">Close</button>
+</div></div>
+
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="./backend-config.js"></script>
+<script src="./cloud-foundation.js"></script>
 <script>
 (function(){
 var NOW=new Date(),MON=NOW.getMonth(),YEAR=NOW.getFullYear();
@@ -411,18 +709,76 @@ function sGet(k){try{return localStorage.getItem(k)}catch(e){return mem[k]||null
 function sSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){mem[k]=v;return false}}
 function sDel(k){try{localStorage.removeItem(k)}catch(e){delete mem[k]}}
 var preview=sGet('runadv:mode')==='preview';
+var DIFF={
+ beginner:{name:'Beginner',total:75,desc:'1–5 km, five times each',pool:[1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]},
+ intermediate:{name:'Intermediate',total:125,desc:'1–10 km twice, then 1–5 km again',pool:[1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5]},
+ advanced:{name:'Advanced',total:325,desc:'Every distance from 1–25 km, exactly once',pool:Array.from({length:25},function(_,i){return i+1})}
+};
+var MAX_SWAPS=2;
+var onboardSelected=false;
+function onboardKey(){return 'runadv:challenge-selected:'+(preview?'preview':'real')+':'+YEAR}
+function dcfg(){return DIFF[st.difficulty]||DIFF.advanced}
+function totalKm(){return dcfg().total}
+function chooseDifficulty(which){
+ if(!DIFF[which]||cnt(st.opened)>0){if(cnt(st.opened)>0)toast('Challenge already started. Back up and reset to change difficulty.');return}
+ st.difficulty=which;onboardSelected=true;sSet(onboardKey(),'1');syncAch(false);syncFinal(false);save();render();updateWelcome();
+}
+function chooseStrict(value){
+ if(cnt(st.opened)>0){toast('Strict mode is locked after the first present.');return}
+ st.strict=!!value;save();render();updateWelcome();
+}
+function setDiffButtons(container){
+ var root=document.getElementById(container);root.innerHTML='';
+ Object.keys(DIFF).forEach(function(k){
+  var d=DIFF[k],b=document.createElement('button');b.type='button';b.className='diff-opt';b.setAttribute('aria-pressed',String((st.difficulty||'advanced')===k&&(container!=='welcomeDiff'||onboardSelected||cnt(st.opened)>0)));
+  b.disabled=cnt(st.opened)>0;
+  var info=document.createElement('span'),nm=document.createElement('b'),sm=document.createElement('small'),dist=document.createElement('span');
+  nm.textContent=d.name;sm.textContent=d.desc;dist.className='diff-km';dist.textContent=d.total+' km';info.appendChild(nm);info.appendChild(sm);b.appendChild(info);b.appendChild(dist);
+  b.onclick=function(){chooseDifficulty(k)};root.appendChild(b);
+ });
+}
+function updateWelcome(){
+ var begun=cnt(st.opened)>0,selected=onboardSelected||begun;
+ document.getElementById('welcomeTotal').textContent=selected?totalKm()+' km':'75–325 km';
+ setDiffButtons('welcomeDiff');document.getElementById('welcomeStrict').checked=!!st.strict;
+ document.getElementById('welcomeStrict').disabled=begun;
+ document.getElementById('welcomeLockNote').textContent=begun
+  ?'Your '+dcfg().name+' challenge is already in progress. Its difficulty and Strict Mode are locked to protect your saved runs. You can review your existing settings from the calendar.'
+  :selected?'You selected '+dcfg().name+' ('+totalKm()+' km). Difficulty and Strict Mode lock after you open your first present.':'Select one of the three difficulties to continue. Difficulty and Strict Mode lock after your first present.';
+ var btn=document.getElementById('wStart');btn.disabled=!selected;btn.textContent=begun?'Continue my challenge':'Enter my calendar';
+}
+function renderSettings(){
+ var d=dcfg(),begun=cnt(st.opened)>0,left=Math.max(0,MAX_SWAPS-(st.swapsUsed||0));
+ document.getElementById('modeTag').textContent=d.name+' · '+d.total+' km'+(st.strict?' · Strict':'');
+ document.getElementById('hubSettings').textContent=begun?'🎯 Review challenge settings':'🎯 View / change difficulty';
+ document.getElementById('rulesSum').textContent=d.name+' · '+d.total+' km';
+ document.getElementById('rulesDesc').textContent=d.desc+'. All 25 presents are included.';
+ setDiffButtons('settingsDiff');document.getElementById('settingsStrict').checked=!!st.strict;
+ document.getElementById('settingsStrict').disabled=begun;
+ document.getElementById('rulesLock').textContent=begun?'Difficulty and strict mode are locked because a present has been opened.':'Select a difficulty and strict mode before opening your first present.';
+ document.getElementById('swapUsage').textContent=st.strict?'Strict mode: swaps disabled.':'Swaps remaining: '+left+' of '+MAX_SWAPS+'.';
+ document.getElementById('resetOpen').style.display=begun?'inline-flex':'none';
+ document.getElementById('restoreReset').style.display=!begun&&!!sGet('runadv:preReset:'+(preview?'preview':'real')+':'+YEAR)?'inline-flex':'none';
+ var hint=document.getElementById('challengeHint');
+ hint.textContent='Unwrap presents to reveal your '+d.name.toLowerCase()+' distances ('+d.total+' km across 25 days). '+(st.strict?'Strict mode: no swaps.':'You may swap two opened, incomplete runs up to '+MAX_SWAPS+' times.')+' Tap an opened present to add notes or mark it completed.';
+}
+document.getElementById('welcomeStrict').onchange=function(){chooseStrict(this.checked)};
+document.getElementById('settingsStrict').onchange=function(){chooseStrict(this.checked)};
+
 function key(){return 'runadv:'+(preview?'preview':'real')+':'+YEAR}
 var st={opened:{},done:{}};
-function load(){var r=sGet(key());st={opened:{},done:{},doneAt:{},notes:{},ach:{}};if(r){try{var p=JSON.parse(r);if(p&&p.opened)st=p;if(!st.done)st.done={};if(!st.doneAt)st.doneAt={};if(!st.notes)st.notes={};if(!st.ach)st.ach={}}catch(e){}}}
+function load(){var r=sGet(key());st={opened:{},done:{},doneAt:{},notes:{},ach:{},difficulty:"advanced",strict:false,swapsUsed:0,swapLog:[]};if(r){try{var p=JSON.parse(r);if(p&&p.opened)st=p;if(!st.done)st.done={};if(!st.doneAt)st.doneAt={};if(!st.notes)st.notes={};if(!st.ach)st.ach={};if(!DIFF[st.difficulty])st.difficulty="advanced";st.strict=!!st.strict;st.swapsUsed=Math.max(0,Math.min(MAX_SWAPS,Number(st.swapsUsed)||0));if(!Array.isArray(st.swapLog))st.swapLog=[]}catch(e){}}}
 function save(){
   var ok=sSet(key(),JSON.stringify(st)),ps=document.getElementById('pSave');
   if(ps)ps.textContent=ok?'✓ Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'⚠ Can’t save here: export a backup';
+  renderCloud();
+  if(!preview && window.RunAdventAccounts && window.RunAdventAccounts.onLocalSave)window.RunAdventAccounts.onLocalSave();
   return ok;
 }
 function unlocked(){if(preview)return 25;var n=new Date(),m=n.getMonth();if(n.getFullYear()>YEAR)return 25;if(m<11)return 0;if(m===11)return Math.min(25,n.getDate());return 25}
 function draw(){
-  var u={},pool=[],i;for(var d in st.opened)u[st.opened[d]]=1;
-  for(i=1;i<=25;i++)if(!u[i])pool.push(i);
+  var used={},pool=[],i,n;for(var d in st.opened){n=st.opened[d];used[n]=(used[n]||0)+1}
+  dcfg().pool.forEach(function(k){if(used[k])used[k]--;else pool.push(k)});
   if(!pool.length)return null;
   var r;try{var a=new Uint32Array(1);crypto.getRandomValues(a);r=a[0]/4294967296}catch(e){r=Math.random()}
   return pool[Math.floor(r*pool.length)];
@@ -469,7 +825,8 @@ function render(){
   document.getElementById('sOpen').textContent=openN+'/25';
   document.getElementById('sRev').textContent=rev;
   document.getElementById('sDone').textContent=dn;
-  var pct=dn/325*100;
+  var tgt=totalKm(),pct=dn/tgt*100;
+  document.getElementById('pTarget').textContent=tgt;document.getElementById('pBar').setAttribute('aria-valuemax',tgt);
   document.getElementById('pKm').textContent=dn;
   document.getElementById('pPct').textContent=(pct%1===0?pct.toFixed(0):pct.toFixed(1))+'%';
   document.getElementById('pFill').style.width=pct+'%';
@@ -481,7 +838,8 @@ function render(){
   else if(openN<up)sub.textContent=(up-openN)+' present'+(up-openN>1?'s':'')+' waiting to be unwrapped';
   else sub.textContent=openN===25?'All 25 presents unwrapped. Merry Christmas!':'Come back tomorrow for the next present';
   var pb=document.getElementById('preview');pb.textContent='Preview mode: '+(preview?'on':'off');pb.className='btn'+(preview?' on':'');
-  renderStats();renderFinal();
+  renderStats();renderFinal();renderSettings();renderArchive();socialSortRows();renderCloud();
+  if(window.RunAdventAccounts&&window.RunAdventAccounts.onModeChange)window.RunAdventAccounts.onModeChange();
   weave();
 }
 function bez(a,c,b,t){var u=1-t;return [u*u*a[0]+2*u*t*c[0]+t*t*b[0],u*u*a[1]+2*u*t*c[1]+t*t*b[1]]}
@@ -574,7 +932,7 @@ function paintDetail(){
   document.getElementById('dDone').style.display=done?'none':'flex';
   document.getElementById('dUndo').style.display=done?'flex':'none';
   document.getElementById('dConf').style.display='none';
-  document.getElementById('dMain').style.display='block';
+  document.getElementById('dMain').style.display='block';renderSwapPane();
 }
 function noteStatus(m){document.getElementById('dNoteSt').textContent=m||''}
 function saveNote(){
@@ -608,6 +966,83 @@ document.getElementById('dUndo').onclick=function(){
 document.getElementById('dYes').onclick=function(){delete st.done[cur];if(st.doneAt)delete st.doneAt[cur];syncAch(false);syncFinal(false);save();render();shut('dlg');toast(lostAch.length?'Completion undone. Locked again: '+lostAch.map(function(a){return a.n}).join(', '):'Completion undone')};
 document.getElementById('dNo').onclick=paintDetail;
 document.getElementById('dClose').onclick=function(){shut('dlg')};
+function swapTargets(day){
+ var arr=[];for(var n=1;n<=25;n++)if(n!==day&&st.opened[n]&&!st.done[n]&&st.opened[n]!==st.opened[day])arr.push(n);return arr;
+}
+function renderSwapPane(){
+ var el=document.getElementById('dSwapBox'),can=!!st.opened[cur]&&!st.done[cur]&&!st.strict&&(st.swapsUsed||0)<MAX_SWAPS,options=swapTargets(cur);
+ el.style.display=can&&options.length?'block':'none';document.getElementById('swapConfirm').style.display='none';
+ document.getElementById('swapRemain').textContent=Math.max(0,MAX_SWAPS-(st.swapsUsed||0));
+ var s=document.getElementById('swapTarget');s.innerHTML='';
+ options.forEach(function(d){var o=document.createElement('option');o.value=String(d);o.textContent='Dec '+d+' · '+st.opened[d]+' km';s.appendChild(o)});
+}
+document.getElementById('swapAsk').onclick=function(){
+ var other=Number(document.getElementById('swapTarget').value);
+ if(!swapTargets(cur).includes(other)||st.strict||(st.swapsUsed||0)>=MAX_SWAPS){toast('That swap is no longer available');renderSwapPane();return}
+ document.getElementById('swapMsg').textContent='Swap Dec '+cur+' ('+st.opened[cur]+' km) with Dec '+other+' ('+st.opened[other]+' km)? This uses one of your '+MAX_SWAPS+' swaps.';
+ document.getElementById('swapConfirm').style.display='block';
+};
+document.getElementById('swapNo').onclick=function(){document.getElementById('swapConfirm').style.display='none'};
+document.getElementById('swapYes').onclick=function(){
+ var other=Number(document.getElementById('swapTarget').value),first=cur;
+ if(!st.opened[first]||st.done[first]||!swapTargets(first).includes(other)||st.strict||(st.swapsUsed||0)>=MAX_SWAPS){toast('Swap not available');renderSwapPane();return}
+ var a=st.opened[first],b=st.opened[other];if(a===b){toast('Those runs have the same distance');renderSwapPane();return}
+ st.opened[first]=b;st.opened[other]=a;st.swapsUsed=(st.swapsUsed||0)+1;
+ if(!Array.isArray(st.swapLog))st.swapLog=[];
+ st.swapLog.push({date:new Date().toISOString(),first:first,second:other,firstKm:a,secondKm:b});
+ save();syncAch(false);syncFinal(false);render();document.getElementById('dKm').textContent=st.opened[cur];paintDetail();toast('Distances swapped. '+(MAX_SWAPS-st.swapsUsed)+' swaps remaining.');
+};
+
+// Changing an active difficulty requires an explicit, typed RESET confirmation.
+document.getElementById('resetOpen').onclick=function(){
+ if(!cnt(st.opened))return;
+ document.getElementById('resetMode').textContent=preview?'preview':'real';
+ document.getElementById('resetWord').value='';document.getElementById('resetYes').disabled=true;
+ document.getElementById('resetDlg').classList.add('show');
+};
+document.getElementById('resetWord').oninput=function(){document.getElementById('resetYes').disabled=this.value.trim()!=='RESET'};
+document.getElementById('resetNo').onclick=function(){shut('resetDlg')};
+document.getElementById('resetYes').onclick=function(){
+ if(document.getElementById('resetWord').value.trim()!=='RESET')return;
+ // Resetting this device does not automatically reset cloud data.
+ if(!preview&&window.RunAdventAccounts&&window.RunAdventAccounts.pauseForExternalChange)window.RunAdventAccounts.pauseForExternalChange();
+ // Keep an automatic local recovery snapshot; export backups remain advisable.
+ sSet('runadv:preReset:'+(preview?'preview':'real')+':'+YEAR,JSON.stringify({savedAt:new Date().toISOString(),state:st}));
+ st={opened:{},done:{},doneAt:{},notes:{},ach:{},difficulty:st.difficulty||'advanced',strict:!!st.strict,swapsUsed:0,swapLog:[]};
+ save();syncAch(false);syncFinal(false);render();updateWelcome();shut('resetDlg');toast('Challenge reset. Choose a new difficulty.');
+ document.getElementById('dpRules').open=true;
+};
+document.getElementById('restoreReset').onclick=function(){
+ if(cnt(st.opened))return;
+ var k='runadv:preReset:'+(preview?'preview':'real')+':'+YEAR,raw=sGet(k),saved;
+ try{saved=JSON.parse(raw||'null')}catch(e){}
+ if(!saved||!saved.state||!saved.state.opened){toast('Recovery data is not available.');return}
+ if(!window.confirm('Restore the progress saved before your last reset? Your current empty challenge settings will be replaced.'))return;
+ if(!preview&&window.RunAdventAccounts&&window.RunAdventAccounts.pauseForExternalChange)window.RunAdventAccounts.pauseForExternalChange();
+ sSet(key(),JSON.stringify(saved.state));load();sDel(k);syncAch(false);syncFinal(false);render();updateWelcome();toast('Previous progress recovered!');
+};
+function renderArchive(){
+ var rows=[],y,raw,obj,km,runs,lev,tot;
+ try{for(var i=0;i<localStorage.length;i++){
+  var k=localStorage.key(i),mt=/^runadv:real:(\d{4})$/.exec(k||'');if(!mt)continue;
+  y=Number(mt[1]);if(y>=YEAR)continue;
+  raw=localStorage.getItem(k);try{obj=JSON.parse(raw)}catch(e){continue}
+  if(!obj||!obj.opened||!Object.keys(obj.opened).length)continue;
+  lev=DIFF[obj.difficulty]||DIFF.advanced;tot=lev.total;km=0;runs=0;
+  for(var d=1;d<=25;d++)if(obj.opened[d]&&obj.done&&obj.done[d]){km+=Number(obj.opened[d]);runs++}
+  rows.push({year:y,lev:lev.name,km:km,total:tot,runs:runs});
+ }}catch(e){}
+ rows.sort(function(a,b){return b.year-a.year});
+ document.getElementById('archiveSum').textContent=rows.length+' saved year'+(rows.length===1?'':'s');
+ var root=document.getElementById('archiveRows');root.innerHTML='';
+ if(!rows.length){root.textContent='Your previous Christmas results will appear here after the year changes.';return}
+ rows.forEach(function(a){
+  var box=document.createElement('div'),txt=document.createElement('span'),h=document.createElement('b'),sm=document.createElement('small'),res=document.createElement('strong');
+  box.className='archive-row';h.textContent=a.year+' · '+a.lev;sm.textContent=a.runs+' of 25 runs completed';res.textContent=a.km+' / '+a.total+' km';
+  txt.appendChild(h);txt.appendChild(sm);box.appendChild(txt);box.appendChild(res);root.appendChild(box);
+ });
+}
+
 
 var pend=null;
 function bmsg(m){document.getElementById('bMsg').textContent=m||''}
@@ -618,7 +1053,7 @@ function openBk(mode){
   document.getElementById('bAsk').style.display='none';
   document.getElementById('bTitle').textContent=mode==='exp'?'Export backup':'Import backup';
   bmsg('');pend=null;
-  if(mode==='exp')document.getElementById('bOut').value=JSON.stringify({app:'run-advent',version:1,year:YEAR,exportedAt:new Date().toISOString(),opened:st.opened,done:st.done,doneAt:st.doneAt||{},notes:st.notes||{},ach:st.ach||{},finishedAt:st.finishedAt},null,2);
+  if(mode==='exp')document.getElementById('bOut').value=JSON.stringify({app:'run-advent',version:3,year:YEAR,socialFriends:socialFriends,socialProfileId:socialProfileId(),socialDisplayName:socialName(),exportedAt:new Date().toISOString(),difficulty:st.difficulty||'advanced',strict:!!st.strict,swapsUsed:st.swapsUsed||0,swapLog:st.swapLog||[],opened:st.opened,done:st.done,doneAt:st.doneAt||{},notes:st.notes||{},ach:st.ach||{},finishedAt:st.finishedAt},null,2);
   else document.getElementById('bIn').value='';
   document.getElementById('bk').classList.add('show');
 }
@@ -646,13 +1081,18 @@ function parseBackup(txt){
   var o;try{o=JSON.parse(txt)}catch(e){return{err:'That doesn’t look like a Run Advent backup.'}}
   if(!o||o.app!=='run-advent'||!o.opened||typeof o.opened!=='object')return{err:'That doesn’t look like a Run Advent backup.'}
   if(o.year!==YEAR)return{err:'This backup is for '+o.year+', but this calendar is for '+YEAR+'.'}
-  var op={},seen={},k,d,v,up=unlocked();
+  var difficulty=o.difficulty||'advanced',cfg=DIFF[difficulty];
+  if(!cfg)return{err:'The backup contains an unsupported difficulty.'};
+  var swapsUsed=Number(o.swapsUsed||0);
+  if(!Number.isInteger(swapsUsed)||swapsUsed<0||swapsUsed>MAX_SWAPS)return{err:'The backup contains an invalid swap count.'};
+  var allowed={},op={},seen={},k,d,v,up=unlocked();
+  cfg.pool.forEach(function(x){allowed[x]=(allowed[x]||0)+1});
   for(k in o.opened){
     d=Number(k);v=Number(o.opened[k]);
     if(!(d>=1&&d<=25&&d%1===0&&v>=1&&v<=25&&v%1===0))return{err:'The backup contains invalid data, so nothing was changed.'}
-    if(seen[v])return{err:'The backup repeats a distance, so nothing was changed.'}
+    if(!allowed[v]||seen[v]>=allowed[v])return{err:'The backup contains more copies of a distance than the selected difficulty allows.'}
     if(d>up)return{err:'The backup includes presents that haven’t unlocked yet, so nothing was changed.'}
-    seen[v]=1;op[d]=v;
+    seen[v]=(seen[v]||0)+1;op[d]=v;
   }
   var dn={},da={},nt={},x;
   if(o.done&&typeof o.done==='object')for(k in o.done){d=Number(k);if(op[d]&&o.done[k]){dn[d]=1;x=o.doneAt&&o.doneAt[k];if(typeof x==='string'&&!isNaN(new Date(x)))da[d]=x}}
@@ -660,16 +1100,20 @@ function parseBackup(txt){
   var ac={};
   if(o.ach&&typeof o.ach==='object')for(k in o.ach){x=o.ach[k];if(AC.some(function(a){return a.id===k})&&typeof x==='string'&&(x===''||!isNaN(new Date(x))))ac[k]=x}
   var fa=(typeof o.finishedAt==='string'&&(o.finishedAt===''||!isNaN(new Date(o.finishedAt))))?o.finishedAt:undefined;
-  return{opened:op,done:dn,doneAt:da,notes:nt,ach:ac,finishedAt:fa};
+  var socialImportFriends=Array.isArray(o.socialFriends)?o.socialFriends.slice(0,100).map(socialValidate).filter(Boolean):null;
+  var socialImportId=typeof o.socialProfileId==='string'&&/^ra-[a-f0-9]{24}$/.test(o.socialProfileId)?o.socialProfileId:null;
+  var socialImportName=typeof o.socialDisplayName==='string'?o.socialDisplayName.trim().slice(0,32):null;
+  return{opened:op,done:dn,doneAt:da,notes:nt,ach:ac,finishedAt:fa,difficulty:difficulty,strict:!!o.strict,swapsUsed:swapsUsed,swapLog:Array.isArray(o.swapLog)?o.swapLog.slice(0,MAX_SWAPS):[],socialFriends:socialImportFriends,socialProfileId:socialImportId,socialDisplayName:socialImportName};
 }
 function cnt(o){var n=0;for(var k in o)n++;return n}
 function applyBackup(b){
-  st={opened:b.opened,done:b.done,doneAt:b.doneAt||{},notes:b.notes||{},ach:b.ach||{}};if(typeof b.finishedAt==='string')st.finishedAt=b.finishedAt;syncAch(false);syncFinal(false);save();render();shut('bk');toast('Progress restored from backup');pend=null;
+  if(window.RunAdventAccounts&&window.RunAdventAccounts.pauseForExternalChange)window.RunAdventAccounts.pauseForExternalChange();
+  st={opened:b.opened,done:b.done,doneAt:b.doneAt||{},notes:b.notes||{},ach:b.ach||{},difficulty:b.difficulty||'advanced',strict:!!b.strict,swapsUsed:b.swapsUsed||0,swapLog:b.swapLog||[]};if(typeof b.finishedAt==='string')st.finishedAt=b.finishedAt;if(Array.isArray(b.socialFriends)){socialFriends=b.socialFriends;sGet(SOCIAL_KEY);socialSave()}if(b.socialProfileId)sSet(SOCIAL_ID_KEY,b.socialProfileId);if(b.socialDisplayName!==null&&b.socialDisplayName!==undefined){sSet('runadv:social:name',b.socialDisplayName);document.getElementById('socialName').value=b.socialDisplayName;}syncAch(false);syncFinal(false);save();render();shut('bk');toast('Progress restored from backup');pend=null;
 }
 document.getElementById('bGo').onclick=function(){
   var r=parseBackup(document.getElementById('bIn').value.trim());
   if(r.err){bmsg(r.err);return}
-  if(!cnt(r.opened)){bmsg('That backup has no opened presents.');return}
+  if(!cnt(r.opened)&&cnt(st.opened)){bmsg('This backup has no opened presents. For safety, use Reset Challenge instead.');return}
   if(!cnt(st.opened)){applyBackup(r);return}
   pend=r;bmsg('');
   document.getElementById('bAskMsg').textContent='Backup: '+cnt(r.opened)+' presents opened, '+cnt(r.done)+' completed. Your current progress ('+cnt(st.opened)+' opened, '+cnt(st.done)+' completed) will be replaced. This can’t be undone.';
@@ -718,14 +1162,28 @@ function tickCd(){
   if(i.ms<=0)checkDay();
 }
 setInterval(tickCd,1000);tickCd();
-function hasProgress(){try{var p=JSON.parse(sGet('runadv:real:'+YEAR)||'null');return !!(p&&p.opened&&Object.keys(p.opened).length)}catch(e){return false}}
-function showWelcome(first){
-  document.getElementById('wStart').textContent=first?'Start Challenge':'Back to my calendar';
-  tickCd();document.getElementById('wel').classList.add('show');
+function welcomeStep(step){
+ var intro=step==='intro';
+ document.getElementById('welcomeIntro').style.display=intro?'block':'none';
+ document.getElementById('welcomeSetup').style.display=intro?'none':'block';
+ updateWelcome();
+ var card=document.querySelector('#wel .sheet');if(card)card.scrollTop=0;
 }
-document.getElementById('wStart').onclick=function(){sSet('runadv:welcomed','1');shut('wel');try{window.scrollTo(0,0)}catch(e){}};
-document.getElementById('how').onclick=function(){showWelcome(false)};
-document.getElementById('wel').onclick=function(e){if(e.target===document.getElementById('wel')&&sGet('runadv:welcomed'))shut('wel')};
+function showWelcome(){
+ // Previously completed or ongoing challenges remain intact, including older Stage 1–4 data.
+ onboardSelected=cnt(st.opened)>0||sGet(onboardKey())==='1';
+ tickCd();welcomeStep('intro');document.getElementById('wel').classList.add('show');
+ document.getElementById('wNext').focus({preventScroll:true});
+}
+document.getElementById('wNext').onclick=function(){welcomeStep('setup');document.getElementById('welcomeDiff').querySelector('.diff-opt:not(:disabled)')?.focus({preventScroll:true})};
+document.getElementById('wBack').onclick=function(){welcomeStep('intro');document.getElementById('wNext').focus({preventScroll:true})};
+document.getElementById('wStart').onclick=function(){
+ if(!(onboardSelected||cnt(st.opened)>0)){toast('Select a challenge difficulty first.');return}
+ sSet(onboardKey(),'1');sSet('runadv:welcomed','1');shut('wel');try{window.scrollTo(0,0)}catch(e){}
+ document.getElementById('hubSettings').focus({preventScroll:true});
+};
+document.getElementById('how').onclick=function(){showWelcome()};
+document.getElementById('hubSettings').onclick=function(){var d=document.getElementById('dpRules');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'});};
 /* ---- stage 3: achievements, weekly summary, stats ---- */
 var AC=[
  {id:'first',ic:'🎁',n:'First Footprints',t:'Complete your first run',k:'runs',v:1},
@@ -737,6 +1195,14 @@ var AC=[
  {id:'r25',ic:'🎄',n:'Advent Champion',t:'Complete all 25 runs',k:'runs',v:25},
  {id:'km325',ic:'🌟',n:'Christmas Legend',t:'Complete all 325 km',k:'km',v:325}
 ];
+function achievementSet(){
+ var d=st.difficulty||'advanced',limits=d==='beginner'?[15,30,50,75]:d==='intermediate'?[25,50,85,125]:[50,100,200,325];
+ return AC.map(function(a){
+  var o=Object.assign({},a),ix={km50:0,km100:1,km200:2,km325:3}[a.id];
+  if(ix!==undefined){o.v=limits[ix];o.t='Complete '+o.v+' km in total'}
+  return o;
+ });
+}
 var WK=[[1,7],[8,14],[15,21],[22,25]],lostAch=[],fresh={},achQ=[],achBusy=false,achT;
 function calc(){
   var r={runs:0,km:0,lon:0,lonD:0,weeks:[]},d,k;
@@ -751,7 +1217,7 @@ function calc(){
 function syncAch(announce){
   if(!st.ach)st.ach={};
   var s2=calc(),changed=false,out=[];lostAch=[];
-  AC.forEach(function(a){
+  achievementSet().forEach(function(a){
     var ok=s2[a.k]>=a.v,has=Object.prototype.hasOwnProperty.call(st.ach,a.id);
     if(ok&&!has){st.ach[a.id]=announce?new Date().toISOString():'';changed=true;if(announce)out.push(a)}
     else if(!ok&&has){delete st.ach[a.id];changed=true;lostAch.push(a)}
@@ -777,7 +1243,7 @@ function fmtN(v){return v%1===0?String(v):v.toFixed(1)}
 function renderStats(){
   var c=calc(),i,h='',n=0,cw=curWeek();
   /* achievements */
-  AC.forEach(function(a){
+  achievementSet().forEach(function(a){
     var on=Object.prototype.hasOwnProperty.call(st.ach||{},a.id),cur=c[a.k],u=a.k==='km'?' km':' runs',sub;
     if(on){n++;var dt=st.ach[a.id]?new Date(st.ach[a.id]):null;sub='Unlocked'+(dt&&!isNaN(dt)?' · '+dt.toLocaleDateString(undefined,{day:'numeric',month:'short'}):'')}
     else sub=Math.min(cur,a.v)+' / '+a.v+u;
@@ -802,7 +1268,7 @@ function renderStats(){
   document.getElementById('tiles').innerHTML=
     '<div class="tile"><span>Longest run</span><b>'+(c.runs?c.lon+' km':'—')+'</b><small>'+(c.runs?'Present '+c.lonD:'none yet')+'</small></div>'+
     '<div class="tile"><span>Average run</span><b>'+(c.runs?fmtN(Math.round(avg*10)/10)+' km':'—')+'</b><small>'+(c.runs?'over '+c.runs+(c.runs===1?' run':' runs'):'none yet')+'</small></div>'+
-    '<div class="tile"><span>Total completed</span><b>'+c.km+' km</b><small>of 325 km</small></div>';
+    '<div class="tile"><span>Total completed</span><b>'+c.km+' km</b><small>of '+totalKm()+' km</small></div>';
   document.getElementById('sumS').textContent=c.km+' km · '+c.runs+(c.runs===1?' run':' runs');
 }
 /* ---- stage 4: share images, finish celebration, certificate ---- */
@@ -881,7 +1347,7 @@ function drawRun(cv,fmt,d){
   if(done){c.save();c.strokeStyle='#ffffff';c.lineWidth=story?12:10;c.lineCap='round';c.lineJoin='round';var x0=px+(story?62:52);c.beginPath();c.moveTo(x0-18,py);c.lineTo(x0-4,py+16);c.lineTo(x0+22,py-16);c.stroke();c.restore()}
   txt(c,lab,px+(story?55:45)+iw,py+(story?19:16),f,done?'#ffffff':'#2b1a00','left');
   if(done&&st.doneAt&&st.doneAt[d]){var t=new Date(st.doneAt[d]);if(!isNaN(t))txt(c,'Completed '+t.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}),W/2,story?1270:905,'500 '+(story?36:30)+'px '+FAM,'#b9cbbf')}
-  if(story)txt(c,'25 days · 25 presents · 325 km',W/2,1720,'500 32px '+FAM,'#8fa497');
+  if(story)txt(c,dcfg().name+' · 25 days · '+totalKm()+' km',W/2,1720,'500 32px '+FAM,'#8fa497');
   if(site){fit(c,site,W-160,story?40:34,'600',FAM);c.fillStyle='#ffd447';c.textAlign='center';c.textBaseline='alphabetic';c.fillText(site,W/2,story?1670:1030)}
 }
 function holly(c,x,y,sx,sy){
@@ -908,6 +1374,7 @@ function drawCert(cv){
   spaced(c,'OF COMPLETION',W/2,492,14,'#b3262e','700 44px '+SER);
   c.fillStyle='#c9962b';c.fillRect(W/2-140,530,280,4);
   txt(c,'Running Christmas Advent '+YEAR,W/2,605,'italic 500 48px '+SER,'#5a4a30');
+  txt(c,dcfg().name+' challenge · '+totalKm()+' km',W/2,658,'600 32px '+FAM,'#1f6b4a');
   txt(c,'This certificate is proudly awarded to',W/2,725,'400 40px '+SER,'#5a4a30');
   fit(c,name,W-320,110,'italic 700',SER);c.fillStyle='#b3262e';c.textAlign='center';c.textBaseline='alphabetic';c.fillText(name,W/2,855);
   c.fillStyle='#c9962b';c.fillRect(220,890,W-440,4);
@@ -980,7 +1447,7 @@ document.getElementById('fS').onclick=function(){setFmt('story')};
 document.getElementById('fQ').onclick=function(){setFmt('sq')};
 document.getElementById('sShare').onclick=function(){
   if(!sFile)return;
-  var u=siteAddr(),tx=sMode==='run'?'Day '+sDay+' of the Running Christmas Advent: '+st.opened[sDay]+' km'+(st.done[sDay]?' ✓':'')+(u?' · '+u:''):'I completed the Running Christmas Advent: 325 km in 25 runs! 🎄'+(u?' '+u:''),p;
+  var u=siteAddr(),tx=sMode==='run'?'Day '+sDay+' of the Running Christmas Advent: '+st.opened[sDay]+' km'+(st.done[sDay]?' ✓':'')+(u?' · '+u:''):'I completed the '+dcfg().name+' Running Christmas Advent: '+totalKm()+' km in 25 runs! 🎄'+(u?' '+u:''),p;
   try{p=navigator.share({files:[sFile],title:'Running Christmas Advent',text:tx})}catch(e){setHint('Sharing didn’t work here. Tap Download, or press and hold the image to save it.');return}
   if(p&&p.catch)p.catch(function(e){if(e&&e.name==='AbortError')return;setHint('Sharing didn’t work here. Tap Download, or press and hold the image to save it.')});
 };
@@ -1116,12 +1583,192 @@ function setMode(m){
     L.g.style.animationDuration=du+'s';L.g.style.animationDelay=(-d)+'s';
   });
 }
+
+/* STAGE 5.5: local friends snapshots, deliberately not live or cloud-backed. */
+var SOCIAL_KEY='runadv:social:friends:v1',SOCIAL_ID_KEY='runadv:social:id:v1';
+var socialFriends=[],socialPending=null,socialShareLink='';
+function socialProfileId(){
+ var v=sGet(SOCIAL_ID_KEY);
+ if(v&&/^ra-[a-f0-9]{24}$/.test(v))return v;
+ var a=new Uint8Array(12);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);
+ else for(var i=0;i<a.length;i++)a[i]=Math.floor(Math.random()*256);
+ v='ra-'+Array.from(a,function(x){return x.toString(16).padStart(2,'0')}).join('');
+ sSet(SOCIAL_ID_KEY,v);return v;
+}
+function socialName(){return (sGet('runadv:social:name')||getName()||'').trim().slice(0,32)}
+function socialPublicName(){var n=document.getElementById('socialName').value.replace(/\s+/g,' ').trim().slice(0,32);return n||'Runner'}
+function socialSnapshot(){
+ var s=calc();return {v:1,id:socialProfileId(),name:socialPublicName(),year:YEAR,difficulty:st.difficulty||'advanced',target:totalKm(),km:s.km,runs:s.runs,at:new Date().toISOString()};
+}
+function socialValidate(obj){
+ if(!obj||typeof obj!=='object'||obj.v!==1)return null;
+ if(typeof obj.id!=='string'||!/^ra-[a-f0-9]{24}$/.test(obj.id))return null;
+ if(typeof obj.name!=='string'||!obj.name.trim()||obj.name.length>32||/[\u0000-\u001f\u007f]/.test(obj.name))return null;
+ if(!Number.isInteger(obj.year)||obj.year<2024||obj.year>2099||!DIFF[obj.difficulty])return null;
+ if(obj.target!==DIFF[obj.difficulty].total||!Number.isFinite(obj.km)||obj.km<0||obj.km>obj.target||!Number.isInteger(obj.runs)||obj.runs<0||obj.runs>25)return null;
+ if(obj.runs===0&&obj.km!==0||obj.runs>0&&obj.km<obj.runs)return null;
+ if(typeof obj.at!=='string'||!/^\d{4}-\d{2}-\d{2}T/.test(obj.at)||!Number.isFinite(Date.parse(obj.at)))return null;
+ if(Date.parse(obj.at)>Date.now()+86400000)return null;
+ return {v:1,id:obj.id,name:obj.name.trim(),year:obj.year,difficulty:obj.difficulty,target:obj.target,km:obj.km,runs:obj.runs,at:obj.at};
+}
+function socialLoad(){
+ try{var a=JSON.parse(sGet(SOCIAL_KEY)||'[]');if(Array.isArray(a))socialFriends=a.slice(0,100).map(socialValidate).filter(Boolean)}catch(e){socialFriends=[]}
+ var n=document.getElementById('socialName');n.value=socialName();
+}
+function socialSave(){var ok=sSet(SOCIAL_KEY,JSON.stringify(socialFriends));if(!ok)toast('Could not save your friends. Check storage settings.');}
+function socialEncode(obj){
+ var bytes=new TextEncoder().encode(JSON.stringify(obj));var str='';for(var i=0;i<bytes.length;i++)str+=String.fromCharCode(bytes[i]);
+ return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+function socialDecode(text){
+ var t=text.trim();if(t.length>3500)return null;
+ var match=t.match(/(?:^|[#&?])ra-friend=([A-Za-z0-9_-]+)/);
+ if(match)t=match[1];
+ if(!/^[A-Za-z0-9_-]{20,1600}$/.test(t))return null;
+ try{var str=atob(t.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-t.length%4)%4)),bytes=Uint8Array.from(str,function(c){return c.charCodeAt(0)});return socialValidate(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)))}catch(e){return null}
+}
+function socialOpen(kind){
+ document.getElementById('socialDlg').classList.add('show');
+ document.getElementById('socialTitle').textContent=kind==='share'?'Share my progress':kind==='import'?'Add a friend':'Review progress';
+ document.getElementById('socialSharePane').style.display=kind==='share'?'block':'none';
+ document.getElementById('socialImportPane').style.display=kind==='import'?'block':'none';
+ document.getElementById('socialAcceptPane').style.display=kind==='accept'?'block':'none';
+ document.getElementById('socialMessage').textContent=kind==='share'?'Your challenge snapshot is ready.':'Add a friend by pasting their shared progress link.';
+ document.getElementById('socialModalStatus').textContent='';
+}
+function socialStats(root,s){
+ var e=document.getElementById(root);e.textContent='';
+ [[s.km+' km','Completed'],[(s.km/s.target*100).toFixed(1)+'%','Challenge'],[s.runs+'/25','Runs']].forEach(function(z){
+  var box=document.createElement('span'),b=document.createElement('b');b.textContent=z[0];box.appendChild(b);box.appendChild(document.createTextNode(z[1]));e.appendChild(box);
+ });
+}
+function socialShowShare(){
+ if(preview){toast('Turn off Preview mode to share real progress.');return}
+ var n=document.getElementById('socialName');n.value=n.value.replace(/\s+/g,' ').trim().slice(0,32);
+ if(!n.value){n.focus();toast('Enter your running name first.');document.getElementById('manualBoard').open=true;document.getElementById('dpSocial').open=true;return}
+ sSet('runadv:social:name',n.value);
+ var snap=socialSnapshot();socialShareLink=window.location.href.split('#')[0]+'#ra-friend='+socialEncode(snap);
+ socialOpen('share');socialStats('socialShareStats',snap);
+ document.getElementById('socialLinkCode').textContent=socialShareLink;
+ document.getElementById('socialNative').style.display=navigator.share?'flex':'none';
+}
+function socialReview(s){
+ if(!s){document.getElementById('socialModalStatus').textContent='That link is invalid or uses an unsupported progress format.';return}
+ if(s.id===socialProfileId()){document.getElementById('socialModalStatus').textContent='This is your own progress link.';return}
+ if(s.year!==YEAR){document.getElementById('socialModalStatus').textContent='This snapshot is from '+s.year+'. This board currently compares '+YEAR+' challenges only.';return}
+ var old=socialFriends.find(function(x){return x.id===s.id&&x.year===s.year});
+ if(old&&Date.parse(old.at)>Date.parse(s.at)){document.getElementById('socialModalStatus').textContent='You already have a newer snapshot from this friend.';return}
+ socialPending=s;socialOpen('accept');socialStats('socialFriendStats',s);
+ document.getElementById('socialMessage').textContent=(old?'Update':'Add')+' '+s.name+'?';
+ document.getElementById('socialFriendInfo').textContent=DIFF[s.difficulty].name+' · '+s.target+' km challenge · shared '+new Date(s.at).toLocaleString();
+}
+function socialParseInput(){socialReview(socialDecode(document.getElementById('socialLinkInput').value))}
+function socialSortRows(){
+ var root=document.getElementById('socialRows');root.textContent='';
+ var sort=document.getElementById('socialSort').value,filter=document.getElementById('socialDifficulty').value;
+ var all=socialFriends.filter(function(s){return s.year===YEAR&&(filter==='all'||s.difficulty===filter)}).slice();
+ if(!preview){var own=socialSnapshot();own.self=true;if(filter==='all'||own.difficulty===filter)all.push(own)}
+ all.sort(function(a,b){var av=sort==='km'?a.km:sort==='runs'?a.runs:a.km/a.target,bv=sort==='km'?b.km:sort==='runs'?b.runs:b.km/b.target;return bv-av||b.km-a.km||a.name.localeCompare(b.name)});
+ document.getElementById('socialSummary').textContent=socialFriends.filter(function(s){return s.year===YEAR}).length+' friends · local only';
+ var me=calc();document.getElementById('socialMyStats').textContent=(preview?'Preview mode: sharing disabled. ':'')+'You: '+me.km+' / '+totalKm()+' km · '+me.runs+' / 25 runs. Your friends must send updated links to refresh their scores.';
+ if(!all.length){var empty=document.createElement('p');empty.className='social-empty';empty.textContent=preview?'Turn off Preview mode to use your friends board.':'No friends saved yet. Share your progress and ask a friend to share theirs.';root.appendChild(empty);return}
+ all.forEach(function(s,i){
+  var r=document.createElement('div');r.className='social-row';
+  var rank=document.createElement('div');rank.className='social-rank';rank.textContent=String(i+1);
+  var person=document.createElement('div');person.className='social-runner';var nm=document.createElement('b');nm.textContent=s.name+(s.self?' (You)':'');person.appendChild(nm);
+  var small=document.createElement('small');small.textContent=DIFF[s.difficulty].name+' · '+s.runs+'/25 runs'+(s.self?' · live on this device':' · snapshot '+new Date(s.at).toLocaleDateString());person.appendChild(small);
+  if(!s.self){var remove=document.createElement('button');remove.type='button';remove.className='social-mini';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+s.name+' from friends board');remove.onclick=function(){if(confirm('Remove '+s.name+' from your local friends board?')){socialFriends=socialFriends.filter(function(a){return !(a.id===s.id&&a.year===s.year)});socialSave();socialSortRows();}};person.appendChild(remove)}
+  var score=document.createElement('div');score.className='social-score';var b=document.createElement('b'),sm=document.createElement('small');b.textContent=sort==='runs'?s.runs+' runs':sort==='km'?s.km+' km':(s.km/s.target*100).toFixed(1)+'%';sm.textContent=sort==='km'?(s.km/s.target*100).toFixed(1)+'% goal':' '+s.km+' km';score.appendChild(b);score.appendChild(sm);
+  r.appendChild(rank);r.appendChild(person);r.appendChild(score);root.appendChild(r);
+ });
+}
+function socialHandleIncoming(){
+ var hash=window.location.hash,mt=hash.match(/^#ra-friend=([A-Za-z0-9_-]+)$/);if(!mt)return;
+ var s=socialDecode(mt[1]);
+ try{history.replaceState(null,'',window.location.pathname+window.location.search)}catch(e){}
+ document.getElementById('dpSocial').open=true;
+ if(!s){socialOpen('import');document.getElementById('socialModalStatus').textContent='The shared progress link could not be read.';return}
+ socialReview(s);
+}
+function socialCopyText(t){
+ function fallback(){var code=document.getElementById('socialLinkCode');code.textContent=t;var selection=window.getSelection(),range=document.createRange();range.selectNodeContents(code);selection.removeAllRanges();selection.addRange(range);document.getElementById('socialModalStatus').textContent='Select and copy this link manually.'}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){document.getElementById('socialModalStatus').textContent='Progress link copied! Send it to your friends.'},fallback);
+ else fallback();
+}
+document.getElementById('socialShortcut').onclick=function(){var d=document.getElementById('dpSocial');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})};
+document.getElementById('socialName').onchange=function(){var n=this.value.replace(/\s+/g,' ').trim().slice(0,32);this.value=n;sSet('runadv:social:name',n);socialSortRows()};
+document.getElementById('socialShare').onclick=socialShowShare;
+document.getElementById('socialImport').onclick=function(){socialPending=null;document.getElementById('socialLinkInput').value='';socialOpen('import')};
+document.getElementById('socialClose').onclick=function(){socialPending=null;shut('socialDlg')};
+document.getElementById('socialCancel').onclick=function(){socialPending=null;shut('socialDlg')};
+document.getElementById('socialCheck').onclick=socialParseInput;
+document.getElementById('socialCopy').onclick=function(){socialCopyText(socialShareLink)};
+document.getElementById('socialNative').onclick=function(){if(navigator.share)navigator.share({title:'Run Advent progress',text:'My Run Advent challenge progress 👟',url:socialShareLink}).catch(function(){})};
+document.getElementById('socialAccept').onclick=function(){
+ var s=socialPending;if(!s)return;
+ socialFriends=socialFriends.filter(function(x){return !(x.id===s.id&&x.year===s.year)});socialFriends.push(s);
+ if(socialFriends.length>100)socialFriends.shift();socialSave();socialPending=null;shut('socialDlg');document.getElementById('manualBoard').open=true;document.getElementById('dpSocial').open=true;socialSortRows();toast(s.name+' added to your friends board');
+};
+document.getElementById('socialSort').onchange=socialSortRows;
+document.getElementById('socialDifficulty').onchange=socialSortRows;
+
+
+/* STAGE 6: guest-safe cloud readiness and migration preview. */
+function renderCloud(){
+ var api=window.RunAdventCloud,badge=document.getElementById('cloudBadge'),state=document.getElementById('cloudState');
+ if(!api){badge.textContent='Local mode';state.textContent='Local only';document.getElementById('cloudInfo').textContent='Cloud helper was not loaded. Your guest calendar continues to work locally.';document.getElementById('cloudTest').disabled=true;return;}
+ var c=api.configStatus(),s=api.localSummary(st,YEAR,preview);
+ badge.textContent=c.status==='configured'?'Setup ready':c.status==='invalid'?'Check setup':'Local mode';
+ state.textContent=c.status==='configured'?'Configured':c.status==='invalid'?'Invalid key or URL':'Local only';
+ document.getElementById('cloudInfo').textContent=c.message;
+ document.getElementById('cloudLocalSummary').textContent=(preview?'Preview calendar: ':'Real calendar: ')+s.openedDays+' presents opened, '+s.completedRuns+' runs completed, '+s.completedKm+' / '+s.targetKm+' km on this device. '+(s.valid?'Ready for a later optional migration.':'Check your saved progress: '+s.warnings.join(' '));
+ document.getElementById('cloudTest').disabled=c.status!=='configured';
+}
+document.getElementById('cloudTest').onclick=async function(){
+ var api=window.RunAdventCloud;if(!api)return;
+ var result=document.getElementById('cloudResult'),button=this;
+ button.disabled=true;result.className='cloud-result';result.textContent='Checking the Stage 6 database readiness endpoint…';
+ try{var r=await api.preflight();result.className='cloud-result '+(r.ok?'success':'error');result.textContent=r.message;}
+ catch(e){result.className='cloud-result error';result.textContent='Could not complete the setup check.';}
+ finally{button.disabled=api.configStatus().status!=='configured';}
+};
+
 buildTree();buildSnow();setMode(0);
 setInterval(function(){mode=(mode+1)%4;setMode(mode)},6000);
-load();syncAch(false);syncFinal(false);render();
-if(!sGet('runadv:welcomed')){if(hasProgress())sSet('runadv:welcomed','1');else showWelcome(true)}
+load();socialLoad();syncAch(false);syncFinal(false);render();
+var isFriendLink=/^#ra-friend=/.test(window.location.hash);
+socialHandleIncoming();
+// Always show the rules and difficulty selector on a normal visit.
+// Shared friend links open their import dialog first.
+if(!isFriendLink)showWelcome();
+// Stage 7 bridge: expose only real-calendar data to the optional account helper.
+window.RunAdventApp=Object.freeze({
+ year:YEAR,
+ isPreview:function(){return preview},
+ getRealSnapshot:function(){if(preview)return null;return JSON.parse(JSON.stringify(st))},
+ getRealSummary:function(){return window.RunAdventCloud?window.RunAdventCloud.localSummary(st,YEAR,preview):null},
+ applyRealSnapshot:function(snapshot){
+  if(preview)throw Error('Exit Preview Mode before restoring account progress.');
+  if(!snapshot||typeof snapshot!=='object'||!window.RunAdventCloud)throw Error('Invalid cloud backup.');
+  var chk=window.RunAdventCloud.localSummary(snapshot,YEAR,false);
+  if(!chk.valid)throw Error('Cloud backup failed validation: '+chk.warnings.join(' '));
+  var copy=JSON.parse(JSON.stringify(snapshot));
+  if(!DIFF[copy.difficulty])throw Error('Invalid cloud difficulty.');
+  sSet(key(),JSON.stringify(copy));load();sSet(onboardKey(),'1');onboardSelected=true;
+  syncAch(false);syncFinal(false);render();updateWelcome();
+ },
+ safetyBackup:function(label){
+  if(preview)throw Error('Cannot back up preview data to an account.');
+  var stamp=new Date().toISOString(),record={app:'run-advent-safety',savedAt:stamp,year:YEAR,reason:label,state:st};
+  var keyName='runadv:safety:'+YEAR+':'+stamp;
+  if(!sSet(keyName,JSON.stringify(record)))throw Error('Could not save a local safety copy. Export your backup first.');
+  return keyName;
+ }
+});
+document.getElementById('accountShortcut').onclick=function(){var e=document.getElementById('dpAccount');e.open=true;e.scrollIntoView({behavior:'smooth',block:'start'});};
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(weave,150)});
 })();
 </script>
+<script src="./runner-accounts.js?v=8"></script>
 </body>
 </html>
