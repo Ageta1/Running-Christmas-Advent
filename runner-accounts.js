@@ -1,7 +1,7 @@
-/* Run Advent — Stage 7 accounts.
+/* Run Advent — accounts and Stage 8 friends.
  * Email/password accounts, private profile, revision-checked opt-in cloud backup.
  * Existing calendar and localStorage always work without this script or Supabase.
- * No public data, future presents, passwords or preview progress are uploaded.
+ * The board reads completed totals from synced challenges.
  */
 (function(root){
  'use strict';
@@ -23,6 +23,142 @@
 
  function msg(t,type){ui.status.textContent=t;ui.status.className='account-alert'+(type?' '+type:'');}
  function safeText(e,t){if(e)e.textContent=t == null?'':String(t);}
+ // Stage 8 uses the signed-in account's existing Supabase client.
+ const friendsPanel = el('dpSocial');
+ const liveBoard = el('liveRows');
+ let boardVersion = 0, sending = false, previousBoard = '', previousLinks = '';
+ function resetFriends(){
+   if(!liveBoard)return;
+   boardVersion++;
+   sending=false;
+   previousBoard=previousLinks='';
+   liveBoard.replaceChildren();
+   el('liveConnections').replaceChildren();
+   el('liveGuest').hidden=!!user;
+   el('liveMembers').hidden=!user;
+   el('liveScope').value='friends';
+   el('liveStatus').textContent='';
+   el('liveUsername').value='';
+   el('liveAdd').querySelector('button').disabled=false;
+   el('liveSummary').textContent=user?'Live rankings':'Friends & rankings';
+   refreshFriends();
+ }
+ function line(tag,text,className){
+   const node=document.createElement(tag);
+   node.textContent=text;
+   if(className)node.className=className;
+   return node;
+ }
+ function renderConnections(links){
+   const root=el('liveConnections');
+   const signature=JSON.stringify(links);
+   if(signature===previousLinks)return;
+   previousLinks=signature;
+   root.replaceChildren();
+   const groups={received:['Incoming requests','accept','decline'],sent:['Sent requests','cancel'],friend:['Friends','remove']};
+   for(const [state,[title,...actions]] of Object.entries(groups)){
+     const rows=links.filter(link=>link.state===state);
+     if(!rows.length)continue;
+     root.append(line('h4',title));
+     for(const link of rows){
+       const name=link.username?link.display_name+' (@'+link.username+')':'Private runner';
+       root.append(line('p',name));
+       const buttons=line('div','','social-actionbar');
+       for(const action of actions){
+         if(action==='accept'&&!link.username)continue;
+         const caption=action[0].toUpperCase()+action.slice(1);
+         const button=line('button',caption,'btn');
+         button.type='button';
+         button.setAttribute('aria-label',caption+' · '+name);
+         button.onclick=()=>{
+           if(action==='remove'&&!window.confirm('Remove '+name+' from your friends?'))return;
+           friendAction(action,null,link.request_id);
+         };
+         buttons.append(button);
+       }
+       root.append(buttons);
+     }
+   }
+   if(!links.length)root.append(line('p','No requests or friends yet.','account-hint'));
+   const count=links.filter(x=>x.state==='friend').length;
+   el('liveSummary').textContent=count+' live friend'+(count===1?'':'s');
+ }
+ function renderBoard(rows){
+   const scope=el('liveScope').value;
+   const signature=scope+JSON.stringify(rows);
+   if(signature===previousBoard)return;
+   previousBoard=signature;
+   liveBoard.replaceChildren();
+   if(!rows.length){
+     liveBoard.append(line('p',scope==='public'?'No runners have shared synced totals on the public board for '+year+'.':'No synced challenges to rank for '+year+' yet.','social-empty'));
+   }
+   rows.forEach((row,i)=>{
+     const item=line('div','','social-row'), info=line('div','','social-runner');
+     info.append(line('b',row.display_name+(row.is_me?' (you)':'')));
+     if(row.username)info.append(line('small','@'+row.username));
+     const percent=(100*row.completed_km/row.target_km).toFixed(1);
+     info.append(line('small',row.difficulty+' · '+row.completed_km+'/'+row.target_km+' km · '+row.completed_runs+'/25 runs'));
+     item.append(line('div',String(i+1),'social-rank'),info,line('b',percent+'%'));
+     liveBoard.append(item);
+   });
+ }
+ async function refreshFriends(successMessage){
+   if(!liveBoard||!client||!user||sending||!friendsPanel.open||document.hidden)return;
+   const version=++boardVersion;
+   const status=el('liveStatus');
+   try{
+     const [links,board]=await Promise.all([client.rpc('run_advent_connections'),client.rpc('run_advent_board',{p_year:year,p_scope:el('liveScope').value})]);
+     if(version!==boardVersion)return;
+     if(links.error||board.error)throw links.error||board.error;
+     renderConnections(links.data||[]);
+     renderBoard(board.data||[]);
+     status.textContent=successMessage||'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'.';
+   }catch(error){
+     if(version!==boardVersion)return;
+     previousBoard=previousLinks='';
+     liveBoard.replaceChildren();
+     el('liveConnections').replaceChildren();
+     el('liveSummary').textContent='Live rankings';
+     status.textContent=error.code==='PGRST202'?'Live boards need the Stage 8 SQL migration.':'Could not update the board. '+error.message;
+   }
+ }
+ async function friendAction(action,username,request){
+   if(sending||!client||!user)return;
+   const owner=user.id, version=++boardVersion;
+   sending=true;
+   el('liveAdd').querySelector('button').disabled=true;
+   const messages={send:'Request sent.',accept:'Request accepted.',decline:'Request declined.',cancel:'Request cancelled.',remove:'Friend removed.'};
+   let message;
+   try{
+     const {error}=await client.rpc('run_advent_friend_action',{p_action:action,p_username:username,p_request:request});
+     if(error)throw error;
+     if(version!==boardVersion)return;
+     if(action==='send')el('liveUsername').value='';
+     message=messages[action];
+   }catch(error){message=error.code==='PGRST202'?'Live boards need the Stage 8 SQL migration.':error.message;}
+   finally{
+     if(user&&user.id===owner&&version===boardVersion){
+       sending=false;
+       el('liveAdd').querySelector('button').disabled=false;
+       el('liveStatus').textContent=message;
+       refreshFriends(message);
+     }
+   }
+ }
+ if(liveBoard){
+   el('liveAdd').onsubmit=e=>{
+     e.preventDefault();
+     const name=el('liveUsername').value.trim().replace(/^@/,'').toLowerCase();
+     if(!/^[a-z0-9_]{3,24}$/.test(name)){el('liveStatus').textContent='Enter a username with 3–24 letters, numbers or underscores.';return;}
+     friendAction('send',name,null);
+   };
+   el('liveRefresh').onclick=()=>refreshFriends();
+   el('liveScope').onchange=()=>{previousBoard='';liveBoard.replaceChildren();refreshFriends();};
+   friendsPanel.addEventListener('toggle',()=>refreshFriends());
+   document.addEventListener('visibilitychange',()=>refreshFriends());
+   setInterval(()=>refreshFriends(),30000);
+ }
+
  function setGuest(){
   ui.guest.hidden=false;ui.signed.hidden=true;ui.label.textContent='Guest · local';
   ui.status.className='account-alert';
@@ -67,7 +203,7 @@
    eq?'Device and cloud match. Select “Use this device → cloud” to enable automatic backups.':
    'Nothing has been replaced. Choose “Use this device → cloud” or “Use cloud → this device” after reviewing both versions. Local backup is kept before replacing either copy.';
   el('accountSyncPause').hidden=!consent;
-  ui.label.textContent=consent?'Account · syncing':'Account · private';
+  ui.label.textContent=consent?'Account · syncing':'Account · signed in';
  }
  function markPending(){if(consent&&user&&!app.isPreview()){
   pendingChanges=true;clearTimeout(saveTimer);
@@ -149,7 +285,7 @@
    revision=Number(data);remote={revision,snapshot:snap,updated_at:new Date().toISOString()};
    lastSynced=hash;pendingChanges=false;
    if(manual)allowAuto();
-   msg('✓ Private account backup saved. No friends can see it unless you deliberately share your progress.','success');
+   msg('✓ Private account backup saved. Leaderboard totals follow your profile settings.','success');
   }catch(e){
    msg(cloudIssue(e),'error');
    stopAuto(); // especially on a revision conflict; never silently overwrite newer cloud data
@@ -205,7 +341,7 @@
   el('accountPrivacy').value=profile.privacy||'private';
   el('accountLeaderboardOpt').checked=!!profile.leaderboard_opt_in;
   safeText(el('accountGreeting'),profile.display_name||'Runner');
-  safeText(el('accountProfileSummary'),'@'+(profile.username||'username not chosen')+' · '+(profile.privacy==='private'?'Private profile':profile.privacy==='friends'?'Friends-only preference':'Public profile preference')+' · No public account discovery until Stage 8.');
+  safeText(el('accountProfileSummary'),'@'+(profile.username||'username not chosen')+' · '+(profile.privacy==='private'?'Private profile':profile.privacy==='friends'?'Friends-only preference':'Public profile preference'));
   safeText(el('accountPrivateEmail'),user?user.email:'');
  }
  async function fetchProfile(){
@@ -230,8 +366,9 @@
   lastSessionId=id;
   clearTimeout(saveTimer);consent=false;pendingChanges=false;
   user=next&&next.user||null;profile=null;remote=null;revision=0;
+  resetFriends();
   if(!user){setGuest();showAuth('signin');return;}
-  ui.guest.hidden=true;ui.signed.hidden=false;ui.label.textContent='Account · private';
+  ui.guest.hidden=true;ui.signed.hidden=false;ui.label.textContent='Account · signed in';
   msg('Signed in. Checking your private account progress…');
   loadingSession=true;
   try{
@@ -290,7 +427,7 @@
    const {data,error}=await client.from('runner_profiles').update(row).eq('id',user.id)
     .select('id,username,display_name,avatar_url,privacy,leaderboard_opt_in,created_at').single();
    if(error)throw error;
-   profile=data;updateProfileUi();msg('✓ Your private runner profile has been updated.','success');
+   profile=data;updateProfileUi();refreshFriends();msg('✓ Your runner profile has been updated.','success');
   }catch(e){msg(e.code==='23505'?'That username is already taken. Choose another.':cloudIssue(e),'error');}
  }
  async function forgot(e){
@@ -366,7 +503,7 @@
  ui.download.onclick=downloadChoice;
  el('accountSyncPause').onclick=()=>{stopAuto();msg('Automatic backup paused. Your local and cloud progress are unchanged.');};
  el('accountSafetyDownload').onclick=exportSafetyBackup;
- root.RunAdventAccounts=Object.freeze({onLocalSave:markPending,onModeChange:showSync,pauseForExternalChange:stopAuto,stage:7});
+ root.RunAdventAccounts=Object.freeze({onLocalSave:markPending,onModeChange:showSync,pauseForExternalChange:stopAuto,stage:8});
  // Show a private-account status only after the existing welcome flow is initialized.
  init();
 })(window);
