@@ -12,8 +12,8 @@
  const config = cloud && cloud.configStatus();
  let client = null, user = null, profile = null, remote = null;
  let revision = 0, authMode = 'signin', syncing = false, consent = false;
- let saveTimer = null, loadingSession = false, recovery = false, lastSessionId = null;
- let initComplete = false, lastSynced = '', pendingChanges = false;
+ let saveTimer = null, loadingSession = false, recovery = false, lastSessionId;
+ let queue = null;
  const ui = {
   status:el('accountStatus'),label:el('accountLabel'),guest:el('accountGuest'),signed:el('accountSignedIn'),
   cloudSummary:el('accountCloudSummary'),summary:el('accountProfileSummary'),
@@ -103,6 +103,7 @@
    });
  }
  async function refreshFriends(successMessage){
+   if(!navigator.onLine){if(liveBoard&&user)el('liveStatus').textContent='Offline. Reconnect to refresh the board.';return;}
    if(!liveBoard||!client||!user||sending||!friendsPanel.open||document.hidden)return;
    const version=++boardVersion;
    const status=el('liveStatus');
@@ -187,9 +188,9 @@
  }
  function showSync(){
   const logged=!!user;
-  ui.upload.disabled=!logged||syncing||app.isPreview();
-  ui.download.disabled=!logged||syncing||app.isPreview()||!getRemoteSnapshot();
-  el('accountRefresh').disabled=!logged||syncing;
+  ui.upload.disabled=!logged||syncing||app.isPreview()||!navigator.onLine;
+  ui.download.disabled=!logged||syncing||app.isPreview()||!getRemoteSnapshot()||!navigator.onLine;
+  el('accountRefresh').disabled=!logged||syncing||!navigator.onLine;
   el('accountSyncPause').disabled=!logged||syncing||!consent;
   if(!logged)return;
   let local='';try{local=describe(currentSnapshot())}catch(e){local=e.message}
@@ -199,26 +200,76 @@
   ui.cloudSummary.textContent='This device: '+local+'\nCloud: '+cloudText;
   ui.cloudSummary.style.whiteSpace='pre-line';
   ui.hint.textContent=app.isPreview()?'Preview Mode: cloud uploads and downloads are disabled. Switch to your real calendar.':
+   consent && queue?.pending ? 'Changes are saved on this device and queued for private backup.' :
    consent ? 'Automatic private backups are ON. Changes made here save to your account, with protection against edits made on another device.' :
    eq?'Device and cloud match. Select “Use this device → cloud” to enable automatic backups.':
    'Nothing has been replaced. Choose “Use this device → cloud” or “Use cloud → this device” after reviewing both versions. Local backup is kept before replacing either copy.';
   el('accountSyncPause').hidden=!consent;
   ui.label.textContent=consent?'Account · syncing':'Account · signed in';
  }
- function markPending(){if(consent&&user&&!app.isPreview()){
-  pendingChanges=true;clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>syncLocal(false),1400);
- }}
+ // Each device pins pending work to the cloud revision it actually reviewed.
+ // Comparing tokens also prevents stale tabs from adopting a newer tab's baseline.
+ function queueKey(){return 'runadv:outbox:'+user.id+':'+year;}
+ function readQueue(){
+  const raw=localStorage.getItem(queueKey());
+  return raw?JSON.parse(raw):null;
+ }
+ function writeQueue(base,synced,pending){
+  const next={token:crypto.randomUUID(),base,synced,pending};
+  localStorage.setItem(queueKey(),JSON.stringify(next));
+  queue=next;
+ }
  function stopAuto(){
-  clearTimeout(saveTimer);saveTimer=null;consent=false;pendingChanges=false;
-  if(user){try{localStorage.removeItem('runadv:auto:'+user.id+':'+year)}catch(e){}}
-  showSync();
+  clearTimeout(saveTimer);
+  if(queue&&user){
+   try{if(readQueue()?.token===queue.token)localStorage.removeItem(queueKey());}catch{}
+  }
+  queue=null;consent=false;showSync();
  }
- function allowAuto(){
-  consent=true;lastSynced=canonical(app.getRealSnapshot());
-  if(user){try{localStorage.setItem('runadv:auto:'+user.id+':'+year,'1')}catch(e){}}
-  showSync();
+ function allowAuto(snap=app.getRealSnapshot()){
+  writeQueue(revision,canonical(snap),null);
+  consent=true;showSync();
  }
+ function pauseForReview(text){
+  stopAuto();msg(text,'error');
+ }
+ function markPending(){
+  if(!consent||!queue||!user||app.isPreview())return;
+  try{
+   if(readQueue()?.token!==queue.token){
+    pauseForReview('Another tab changed this backup. Compare progress before syncing again.');return;
+   }
+   const snap=currentSnapshot();
+   writeQueue(queue.base,queue.synced,snap);
+   clearTimeout(saveTimer);showSync();
+   if(navigator.onLine)saveTimer=setTimeout(()=>syncLocal(false),900);
+  }catch(error){pauseForReview('Automatic backup paused. '+cloudIssue(error));}
+ }
+ function restoreQueue(){
+  if(!user)return;
+  try{
+   const saved=readQueue();
+   if(!saved||!Number.isSafeInteger(saved.base)||saved.base<0||typeof saved.synced!=='string')return;
+   if(!app.isPreview()&&canonical(app.getRealSnapshot())!==(saved.pending?canonical(saved.pending):saved.synced)){
+    msg('This device and its last backup differ. Compare progress before syncing again.');return;
+   }
+   queue=saved;consent=true;showSync();
+  }catch(error){msg('Could not reopen queued backups. '+cloudIssue(error),'error');}
+ }
+ function retryQueue(){
+  showSync();
+  if(navigator.onLine&&consent&&queue?.pending&&!app.isPreview())syncLocal(false);
+ }
+ window.addEventListener('online',async()=>{
+  retryQueue();
+  if(user&&!profile){
+   try{await fetchProfile();await reloadCloud();showSync();}catch(error){msg(cloudIssue(error),'error');}
+  }
+ });
+ window.addEventListener('offline',showSync);
+ window.addEventListener('pageshow',retryQueue);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)retryQueue();});
+ setInterval(()=>{if(!document.hidden)retryQueue();},60000);
  function stampSafety(reason){
   try{return app.safetyBackup(reason)}catch(e){
    throw new Error('Cannot create a safety backup on this device. Export the calendar backup first: '+e.message);
@@ -263,36 +314,54 @@
  }
  async function reloadCloud(){
   if(!client||!user)return;
+  const owner=user.id;
   const {data,error}=await client.from('runner_cloud_saves').select('revision,snapshot,updated_at')
    .eq('user_id',user.id).eq('challenge_year',year).maybeSingle();
   if(error)throw error;
+  if(user?.id!==owner)throw Error('Account changed.');
   remote=data||null;revision=data?Number(data.revision):0;
   return remote;
  }
  async function syncLocal(manual){
   if(!client||!user||app.isPreview()||syncing||(!consent&&!manual))return;
-  clearTimeout(saveTimer);saveTimer=null;
+  clearTimeout(saveTimer);
+  const owner=user.id;
+  const queued=manual?null:queue;
+  if(!navigator.onLine||(!manual&&!queued?.pending))return;
   let snap;
-  try{snap=currentSnapshot();}catch(e){msg(e.message,'error');stopAuto();return;}
-  syncing=true;showSync();if(manual)msg('Saving this device’s progress to your private account…');
-  const expected=revision;
-  const hash=canonical(snap);
+  try{
+   if(queued&&readQueue()?.token!==queued.token){
+    pauseForReview('Another tab changed this backup. Compare progress before syncing again.');return;
+   }
+   snap=manual?currentSnapshot():queued.pending;
+  }catch(error){pauseForReview(cloudIssue(error));return;}
+  const expected=manual?revision:queued.base;
+  syncing=true;showSync();
   try{
    const {data,error}=await client.rpc('run_advent_stage7_save',{
     p_year:year,p_expected_revision:expected,p_snapshot:snap
    });
+   if(user?.id!==owner)return;
    if(error)throw error;
    revision=Number(data);remote={revision,snapshot:snap,updated_at:new Date().toISOString()};
-   lastSynced=hash;pendingChanges=false;
-   if(manual)allowAuto();
+   if(queued&&!consent)return;
+   if(queued&&readQueue()?.token!==queue?.token){
+    pauseForReview('Another tab changed this backup. Compare progress before syncing again.');return;
+   }
+   const newer=queued&&queue?.pending&&canonical(queue.pending)!==canonical(snap)?queue.pending:null;
+   allowAuto(snap);
+   if(newer){
+    writeQueue(revision,canonical(snap),newer);
+    if(!app.isPreview())saveTimer=setTimeout(retryQueue,900);
+   }else if(!app.isPreview()&&canonical(app.getRealSnapshot())!==canonical(snap))markPending();
    msg('✓ Private account backup saved. Leaderboard totals follow your profile settings.','success');
-  }catch(e){
-   msg(cloudIssue(e),'error');
-   stopAuto(); // especially on a revision conflict; never silently overwrite newer cloud data
-  }finally{
-   syncing=false;showSync();
-   if(consent&&!app.isPreview()&&canonical(app.getRealSnapshot())!==lastSynced)markPending();
-  }
+  }catch(error){
+   if(user?.id!==owner)return;
+   if(queued&&!consent)return;
+   if(queued&&(!navigator.onLine||/fetch|network|offline|timeout|load failed/i.test(error.message||'')||Number(error.status)>=500)){
+    msg('Saved on this device. Backup will retry when the connection is available.');
+   }else{pauseForReview(cloudIssue(error));}
+  }finally{syncing=false;showSync();}
  }
  async function uploadChoice(){
   if(!user)return;
@@ -346,40 +415,44 @@
   safeText(el('accountPrivateEmail'),user?user.email:'');
  }
  async function fetchProfile(){
+  const owner=user.id;
   const {data,error}=await client.from('runner_profiles').select('id,username,display_name,avatar_url,privacy,leaderboard_opt_in,created_at').eq('id',user.id).single();
   if(error)throw error;
+  if(user?.id!==owner)return;
   profile=data;updateProfileUi();
  }
  async function signOut(){
   clearTimeout(saveTimer);
-  if(consent && pendingChanges) {
+  if(consent && queue?.pending) {
    if(!root.confirm('Some changes have not finished backing up. Sign out anyway? Your current device progress will remain saved locally.'))return;
   }
   try{
+   const activeKey=user?queueKey():null;
    if(client){const {error}=await client.auth.signOut();if(error)throw error;}
+   if(activeKey)localStorage.removeItem(activeKey);
    await sessionChange(null);
    msg('Signed out. This device still has its saved calendar; you can continue as a guest.');
   }catch(e){msg(cloudIssue(e),'error');}
  }
  async function sessionChange(next){
   const id=next&&next.user&&next.user.id||null;
-  if(id===lastSessionId&&initComplete)return;
+  if(id===lastSessionId)return;
   lastSessionId=id;
-  clearTimeout(saveTimer);consent=false;pendingChanges=false;
+  clearTimeout(saveTimer);consent=false;queue=null;
   user=next&&next.user||null;profile=null;remote=null;revision=0;
   clearProfileFeedback();
   resetFriends();
   if(!user){setGuest();showAuth('signin');return;}
   ui.guest.hidden=true;ui.signed.hidden=false;ui.label.textContent='Account · signed in';
   msg('Signed in. Checking your private account progress…');
-  loadingSession=true;
+  loadingSession=true;restoreQueue();
+  if(!navigator.onLine){msg('Offline. Your calendar is saved on this device.');loadingSession=false;showSync();return;}
   try{
    await fetchProfile();
    await reloadCloud();
-   // Never enable syncing before reviewing cloud and device copies, even if
-   // this browser previously synced to the same account.
-   consent=false;
-   msg('✓ Signed in. Choose your cloud backup or device progress to start syncing.','success');
+   if(user?.id!==id)return;
+   msg(consent?'Signed in. Private backup is enabled on this device.':'Signed in. Choose your cloud backup or device progress to start syncing.','success');
+   retryQueue();
   }catch(e){msg(cloudIssue(e),'error');}
   finally{loadingSession=false;showSync();}
  }
@@ -434,7 +507,9 @@
  async function saveProfile(e){
   e.preventDefault();
   clearProfileFeedback();
+  if(!navigator.onLine){profileFeedback('Reconnect to save your profile. Calendar progress can still be saved offline.','error');return;}
   if(!client||!user){profileFeedback('Sign in again to save your profile.','error');return;}
+  if(!profile){profileFeedback('Your profile is still loading. Reopen online before making changes.','error');return;}
   const usernameField=el('accountUsername'), nameField=el('accountDisplayName'), avatarField=el('accountAvatar');
   const typed=usernameField.value.trim();
   const username=typed.replace(/^@/,'').toLowerCase();
@@ -502,12 +577,12 @@
    el('accountAuthForm').querySelectorAll('input,button').forEach(x=>x.disabled=true);
    el('accountForgot').disabled=true;el('accountTabSignUp').disabled=true;
    msg(config&&config.status==='invalid'?config.message:'Guest mode is active. Configure your Supabase project to enable optional accounts. Your calendar remains fully usable.');
-   initComplete=true;return;
+   return;
   }
   msg('Connecting to the account service. Your calendar is still available without signing in.');
   try{
    if(!root.supabase || typeof root.supabase.createClient!=='function'){
-    const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    const script=document.createElement('script');script.src='./vendor/supabase-2.119.2.js';
     script.async=true;
     await new Promise((ok,fail)=>{script.onload=ok;script.onerror=()=>fail(Error('Could not load the account library. Try again online.'));document.head.appendChild(script)});
    }
@@ -524,7 +599,7 @@
    await sessionChange(data.session||null);
    if(recovery)routeRecovery();
   }catch(e){msg(cloudIssue(e)+' Guest calendar works normally.','error');}
-  finally{initComplete=true;}
+
  }
 
  el('accountTabSignIn').onclick=()=>showAuth('signin');
@@ -546,7 +621,7 @@
  ui.download.onclick=downloadChoice;
  el('accountSyncPause').onclick=()=>{stopAuto();msg('Automatic backup paused. Your local and cloud progress are unchanged.');};
  el('accountSafetyDownload').onclick=exportSafetyBackup;
- root.RunAdventAccounts=Object.freeze({onLocalSave:markPending,onModeChange:showSync,pauseForExternalChange:stopAuto,stage:8});
+ root.RunAdventAccounts=Object.freeze({onLocalSave:markPending,onModeChange:showSync,pauseForExternalChange:stopAuto,stage:9});
  // Show a private-account status only after the existing welcome flow is initialized.
  init();
 })(window);
